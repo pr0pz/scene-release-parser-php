@@ -1,5 +1,5 @@
 {
-	"name": "release-parser",
+	"name": "propz/release-parser",
 	"version": "1.0.0",
 	"description": "A tool for parsing scene release names.",
 	"keywords": [
