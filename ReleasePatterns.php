@@ -1,5 +1,5 @@
 <?php
-namespace pr0pz;
+namespace ReleaseParser;
 
 /**
  * ReleasePatterns - All needed patterns for properly parsing releases.

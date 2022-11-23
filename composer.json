@@ -10,6 +10,10 @@
 		"predb",
 		"propz"
 	],
+	"homepage": "https://github.com/pr0pz/release-parser-php#readme",
+	"readme": "README.md",
+	"time": "2022-11-23",
+	"license": "MIT",
 	"authors": [
 		{
 			"name": "Wellington Estevo",
@@ -22,6 +26,16 @@
 		"issues": "https://github.com/pr0pz/release-parser-php/issues",
 		"source": "https://github.com/pr0pz/release-parser-php/"
 	},
+	"funding": [
+		{
+			"type": "ko-fi",
+			"url": "https://ko-fi.com/propz"
+		},
+		{
+			"type": "coindrop",
+			"url": "https://coindrop.to/propz"
+		}
+	],
 	"require": {
 		"php": ">=5.6"
 	}

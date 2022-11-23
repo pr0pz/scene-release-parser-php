@@ -1,5 +1,5 @@
 <?php
-namespace pr0pz;
+namespace ReleaseParser;
 require_once( 'ReleaseParser.php' );
 
 /**
@@ -15,7 +15,8 @@ require_once( 'ReleaseParser.php' );
  * 
  * @test
  */
-function ReleaseParserTest():void {
+function ReleaseParserTest():void
+{
 	// Some Bash color codes (looks better)
 	$reset = "\33[0m";
 	$bold = "\33[1m";
@@ -29,6 +30,8 @@ function ReleaseParserTest():void {
 	$black = "\33[30m";
 	$white = "\33[97m";
 	$yellow = "\33[33m";
+
+	echo \PHP_EOL . 'Starting ReleaseParser tests ...' . \PHP_EOL . \PHP_EOL;
 
 	// All releases that needed to be tested.
 	$tests = [
@@ -273,10 +276,12 @@ function ReleaseParserTest():void {
 			$output = !empty( $test[0]->get( 'title_extra' ) ) ? $test[0]->get( 'title' ) . " $white/$reset " . $test[0]->get( 'title_extra' ) : $test[0]->get( 'title' );
 			echo "$green($i)$bold$greenlight ✓ Passed:$reset $output" . \PHP_EOL;
 		} else {
-			echo "$redlight($i)$bold$red ✘ Failed:$reset \n$greenlightbg$black Right > $reset $test[1]\n$redbg$black Wrong > $reset $test[0]\n";
+			echo "$redlight($i)$bold$red ✘ Failed:$reset " . $test[0]->get( 'release' ) . "\n$greenlightbg$black Right > $reset $test[1]\n$redbg$black Wrong > $reset $test[0]\n";
 		}
 
 		$i++;
+
+		usleep(15000);
 	}
 }
 
@@ -289,12 +294,18 @@ function ReleaseParserTest():void {
 
 function ReleaseParserTestSingle(): void
 {
-	$release = new ReleaseParser( 'Diablo_II_Resurrected_Update_v1.0.0.3_incl_Offline_Crack_NSW-VENOM', 'games' );
-	//$release = new ReleaseParser( 'LanLine.Complete.Years.2000.2001.GERMAN.EBOOK-BLiZZARD', 'ebook');
-	echo $release . \PHP_EOL;
+	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
+	$release = new ReleaseParser( '24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed', 'tv' );
+
+	// Check if expectation matches parsed.
+	echo '  [Parsed] ' . $release . \PHP_EOL;
+	echo '[Expected] Show: 24 / Title: 9 00 Uhr bis 10 00 Uhr / Group: c0nFuSed / Season: 2 / Episode: 2 / Flags: READNFO, TV Dubbed / Source: DVDRip / Format: SVCD / Language: German, Multilingual / Type: TV' . \PHP_EOL . \PHP_EOL;
+	
+	// Check how var_dump putput looks like
+	echo '[print_r similar to var_dump]' . \PHP_EOL;
 	print_r( $release );
 }
 
-// Do tests
+// Do tests.
 ReleaseParserTest();
-//ReleaseParserTestSingle();
+ReleaseParserTestSingle();
