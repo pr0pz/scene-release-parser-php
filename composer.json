@@ -1,0 +1,28 @@
+{
+	"name": "release-parser",
+	"version": "1.0.0",
+	"description": "A tool for parsing scene release names.",
+	"keywords": [
+		"scene",
+		"release",
+		"parser",
+		"warez",
+		"predb",
+		"propz"
+	],
+	"authors": [
+		{
+			"name": "Wellington Estevo",
+			"email": "info@propz.de",
+			"homepage": "https://propz.de",
+			"role": "Developer"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/pr0pz/release-parser-php/issues",
+		"source": "https://github.com/pr0pz/release-parser-php/"
+	},
+	"require": {
+		"php": ">=5.6"
+	}
+}
