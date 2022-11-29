@@ -7,7 +7,7 @@ require_once( 'ReleasePatterns.php' );
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 class ReleaseParser extends ReleasePatterns {
@@ -1591,7 +1591,7 @@ class ReleaseParser extends ReleasePatterns {
 	 * @param string $name Attribute name.
 	 * @return mixed Attribute value (array, string, int, date, null)
 	 */
-	public function get( string $name )
+	public function get( string $name = 'all' )
 	{
 		// Check if var exists
 		if ( isset( $this->data[ $name ] ) ) {

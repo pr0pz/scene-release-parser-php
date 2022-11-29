@@ -1,18 +1,22 @@
 {
 	"name": "propz/release-parser",
-	"version": "1.0.0",
-	"description": "A tool for parsing scene release names.",
+	"version": "1.0.1",
+	"description": "A library for parsing scene release names into human readable data.",
 	"keywords": [
-		"scene",
-		"release",
 		"parser",
+		"parser-library",
+		"scene",
+		"scene-release",
+		"release",
 		"warez",
+		"warezscene",
+		"warez-scripts",
 		"predb",
 		"propz"
 	],
-	"homepage": "https://github.com/pr0pz/release-parser-php#readme",
+	"homepage": "https://github.com/pr0pz/scene-release-parser-php#readme",
 	"readme": "README.md",
-	"time": "2022-11-23",
+	"time": "2022-11-29",
 	"license": "MIT",
 	"authors": [
 		{
@@ -23,20 +27,16 @@
 		}
 	],
 	"support": {
-		"issues": "https://github.com/pr0pz/release-parser-php/issues",
-		"source": "https://github.com/pr0pz/release-parser-php/"
+		"issues": "https://github.com/pr0pz/scene-release-parser-php/issues",
+		"source": "https://github.com/pr0pz/scene-release-parser-php/"
 	},
 	"funding": [
 		{
 			"type": "ko-fi",
 			"url": "https://ko-fi.com/propz"
-		},
-		{
-			"type": "coindrop",
-			"url": "https://coindrop.to/propz"
 		}
 	],
 	"require": {
-		"php": ">=5.6"
+		"php": "^7.1.0"
 	}
 }

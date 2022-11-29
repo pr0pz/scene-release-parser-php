@@ -3,11 +3,8 @@ namespace ReleaseParser;
 require_once( 'ReleaseParser.php' );
 
 /**
- * This file is used for on the fly testing and debugging and is not needed elsewhere.
- * 
- * @package ReleaseParser
- * @author Wellington Estevo
- * @version 1.0.0
+ * This is the main test file.
+ * This are hand selected, at some point 'more complex' releases that need to pass the test.
  */
 
 /**
