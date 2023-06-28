@@ -12,7 +12,7 @@ require_once( 'ReleaseParser.php' );
  * 
  * @test
  */
-function ReleaseParserTest():void
+function release_parser_test(): void
 {
 	// Some Bash color codes (looks better)
 	$reset = "\33[0m";
@@ -77,6 +77,11 @@ function ReleaseParserTest():void
 		[
 			new ReleaseParser( 'Gegen.den.Strom.2018.German.AC3D.DL.1080p.BluRay.x264-SAVASTANOS', 'X264' ),
 			'Title: Gegen den Strom / Group: SAVASTANOS / Year: 2018 / Source: Bluray / Format: x264 / Resolution: 1080p / Audio: AC3D / Language: German, Multilingual / Type: Movie'
+		],
+		// Movies #5 - Version in name: falsely parsing a version
+		[
+			new ReleaseParser( 'Burial.Ground.The.Nights.Of.Terror.1981.DUBBED.GRINDHOUSE.VERSION.1080P.BLURAY.X264-WATCHABLE', 'X264' ),
+			'Title: Burial Ground The Nights Of Terror / Group: WATCHABLE / Year: 1981 / Flags: Dubbed / Source: Bluray / Format: x264 / Resolution: 1080p / Type: Movie'
 		],
 
 		// TV
@@ -153,6 +158,10 @@ function ReleaseParserTest():void
 		[
 			new ReleaseParser( 'Victoria_feat._Sledge-Wanna_Be_(More_Than_Your_Lover)-(DRR-20-1_CD-M)-CDM-FLAC-1998-WRE', 'mp3' ),
 			'Artist: Victoria feat. Sledge / Song: Wanna Be (More Than Your Lover) / Group: WRE / Year: 1998 / Source: CD Single / Format: FLAC / Type: Music'
+		],
+		[
+			new ReleaseParser( 'Meschino_-_Romeo-SINGLE-WEB-IT-2023-UOVA', 'MP3' ),
+			'Artist: Meschino / Song: Romeo / Group: UOVA / Year: 2023 / Source: Web Single / Language: Italian / Type: Music'
 		],
 		[
 			new ReleaseParser( '(eiffel_65)-blue_cd_beryl-bpm', 'mp3' ),
@@ -267,18 +276,21 @@ function ReleaseParserTest():void
 	$i = 1;
 
 	// Loop all test scenarios
-	foreach( $tests as $test ) {
-
-		if ( $test[0] == $test[1] ) {
+	foreach( $tests as $test )
+	{
+		if ( $test[0] == $test[1] )
+		{
 			$output = !empty( $test[0]->get( 'title_extra' ) ) ? $test[0]->get( 'title' ) . " $white/$reset " . $test[0]->get( 'title_extra' ) : $test[0]->get( 'title' );
 			echo "$green($i)$bold$greenlight ✓ Passed:$reset $output" . \PHP_EOL;
-		} else {
+		}
+		else
+		{
 			echo "$redlight($i)$bold$red ✘ Failed:$reset " . $test[0]->get( 'release' ) . "\n$greenlightbg$black Right > $reset $test[1]\n$redbg$black Wrong > $reset $test[0]\n";
 		}
 
 		$i++;
 
-		usleep(15000);
+		\usleep(15000);
 	}
 }
 
@@ -289,7 +301,7 @@ function ReleaseParserTest():void
  * @test
  */
 
-function ReleaseParserTestSingle(): void
+function release_parser_test_single(): void
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
 	$release = new ReleaseParser( '24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed', 'tv' );
@@ -300,9 +312,9 @@ function ReleaseParserTestSingle(): void
 	
 	// Check how var_dump putput looks like
 	echo '[print_r similar to var_dump]' . \PHP_EOL;
-	print_r( $release );
+	\print_r( $release );
 }
 
 // Do tests.
-ReleaseParserTest();
-ReleaseParserTestSingle();
+release_parser_test();
+release_parser_test_single();

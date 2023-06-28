@@ -6,7 +6,7 @@ namespace ReleaseParser;
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 class ReleasePatterns {
@@ -101,7 +101,8 @@ class ReleasePatterns {
 		'CAM' => 'cam([._-]?rip)?',
 		'CD Album' => '\d*cda', // CD Album
 		'CD EP' => 'cdep',
-		'CD Single' => [ 'cd[sm]', 'mcd', '(?:(?:cd|maxi)[._-]?)?single(?:[._-]web)?', 'cd[._-]?maxi' ], // CD Maxi / Single
+		'CD Single' => [ 'cd[sm]', 'mcd', '(?:(?:cd|maxi)[._-]?)single', 'cd[._-]?maxi' ], // CD Maxi / Single
+		'Web Single' => [ 'web[._-]single|single[._-]web' ], // Web single
 		'Console DVD' => [ 'xboxdvdr?', 'ps2dvd' ],
 		'DAT Tape' => 'DAT', // Digital Audio Tape
 		'DAB' => 'dab', // Digital Audio Broadcast
@@ -507,18 +508,24 @@ class ReleasePatterns {
  */
 
 // PHP < 7.3
-if ( !\function_exists( 'array_key_first' ) ) {
-	function array_key_first( array $arr ) {
-		foreach( $arr as $key => $unused ) {
+if ( !\function_exists( 'array_key_first' ) )
+{
+	function array_key_first( array $arr )
+	{
+		foreach( $arr as $key => $unused )
+		{
 			return $key;
 		}
 		return \null;
 	}
 }
 
-if ( !\function_exists( 'array_key_last' ) ) {
-	function array_key_last( array $array ) {
-		if ( !\is_array( $array ) || empty( $array ) ) {
+if ( !\function_exists( 'array_key_last' ) )
+{
+	function array_key_last( array $array )
+	{
+		if ( !\is_array( $array ) || empty( $array ) )
+		{
 			return \null;
 		}
 		return \array_keys( $array )[ \count( $array ) - 1 ];
@@ -526,8 +533,10 @@ if ( !\function_exists( 'array_key_last' ) ) {
 }
 
 // PHP < 8
-if ( !\function_exists( 'str_contains' ) ) {
-	function str_contains( string $haystack, string $needle ) {
+if ( !\function_exists( 'str_contains' ) )
+{
+	function str_contains( string $haystack, string $needle )
+	{
 		return empty( $needle ) || \strpos( $haystack, $needle ) !== false;
 	}
 }
