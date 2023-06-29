@@ -6,7 +6,7 @@ namespace ReleaseParser;
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 class ReleasePatterns {

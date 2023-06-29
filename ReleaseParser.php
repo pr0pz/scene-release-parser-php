@@ -1,13 +1,15 @@
 <?php
 namespace ReleaseParser;
-require_once( 'ReleasePatterns.php' );
+
+// Include pattern library
+require_once __DIR__ . '/ReleasePatterns.php';
 
 /**
  * ReleaseParser - A tool for parsing scene release names.
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 class ReleaseParser extends ReleasePatterns
@@ -149,11 +151,11 @@ class ReleaseParser extends ReleasePatterns
 
 				// Date (DateTime) is the only obect,
 				// So we have to handle it differently.
-				if ( \is_object( $information_value ) )
+				if ( $information_value instanceof \DateTime )
 				{
 					$values = $information_value->format( 'd.m.Y' );
 				}
-				// Only loop of it's not an object
+				// Only loop of it's not a DateTime object
 				else
 				{
 					$values = \is_array( $information_value ) ? $values . \implode( ', ', $information_value ) : $information_value;

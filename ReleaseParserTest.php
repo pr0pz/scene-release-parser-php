@@ -1,6 +1,8 @@
 <?php
 namespace ReleaseParser;
-require_once( 'ReleaseParser.php' );
+
+// Include ReleaseParser
+require_once __DIR__ . '/ReleaseParser.php';
 
  /**
  * This is the main test file.
@@ -8,7 +10,7 @@ require_once( 'ReleaseParser.php' );
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 /**
@@ -296,9 +298,9 @@ function release_parser_test()
 		}
 
 		$i++;
-
 		// Let tests run slower, so we can actually see if one test fails.
-		//\usleep(10000);
+		// Normal test speed without usleep is about 100ms
+		\usleep(15000);
 	}
 
 	echo \PHP_EOL . 'All tests finished in ' . \round( \microtime( \true ) - $start_time, 4 ) . 's' . \PHP_EOL;
@@ -327,4 +329,4 @@ function release_parser_test_single()
 
 // Do tests.
 release_parser_test();
-release_parser_test_single();
+//release_parser_test_single();

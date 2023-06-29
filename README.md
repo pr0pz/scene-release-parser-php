@@ -30,7 +30,10 @@ I assume you already know some PHP and [composer](https://getcomposer.org/) is a
 $ composer require propz/release-parser
 ```
 
-› Include the library manually into your project (I don't have implemented an autoloader yet);\
+› Include the composer autoloader file into your project:\
+```php
+require_once __DIR__ . '/vendor/autoload.php'
+```
 › Create a new ReleaseParser Class and pass the release name and (optionally) the release section (for better type parsing) as parameters;\
 › You can use the get() function to retrieve an array with all values or just target a specific value with get('name')
 
@@ -38,11 +41,8 @@ __Example:__
 
 ```php
 <?php
-// Include main class file from whoever it's located (example is referrring to composer install)
-require_once( __DIR__ . '/vendor/propz/release-parser/ReleaseParser.php' );
-
-// You can also set the namespace, but it's not needed.
-// use \ReleaseParser\ReleaseParser;
+// Include main composer autoloader file ...
+require_once __DIR__ . '/vendor/autoload.php'
 
 // Create class
 $release = new \ReleaseParser\ReleaseParser( '24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed', 'tv' );
@@ -111,10 +111,6 @@ If you find any bugs/errors, feel free to [post an issue](https://github.com/pr0
 ### __License__
 
 ![License: MIT](https://img.shields.io/packagist/l/propz/release-parser)
-
-### __TO DO__
-
-- Add autolaoder functionality
 
 _That's it!_
 
