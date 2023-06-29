@@ -386,6 +386,7 @@ class ReleasePatterns {
 		'DLC' => '(?:incl[._-])?DLC(?![._-]?(?:Unlocker|Pack))?', // games
 		'DOC' => 'D[O0][CX]',
 		'Doku' => 'DOKU',
+		'Dolby Vision' => 'DV',
 		'Dubbed' => [ '(?<!line[._-]|mic[._-]|micro[._-]|ac3[._-]|tv[._-])Dubbed', 'E[._-]?Dubbed', '(?!over|thunder)[a-z]+dub' ],
 		'eBook' => 'EBOOK',
 		'Extended' => 'EXTENDED(?:[._-]CUT)?',
