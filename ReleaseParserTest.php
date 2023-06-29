@@ -2,17 +2,21 @@
 namespace ReleaseParser;
 require_once( 'ReleaseParser.php' );
 
-/**
+ /**
  * This is the main test file.
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
+ * 
+ * @package ReleaseParser
+ * @author Wellington Estevo
+ * @version 1.0.3
  */
 
 /**
- * All needed tests.
+ * Bulk tests. All have to pass.
  * 
  * @test
  */
-function release_parser_test(): void
+function release_parser_test()
 {
 	// Some Bash color codes (looks better)
 	$reset = "\33[0m";
@@ -27,6 +31,9 @@ function release_parser_test(): void
 	$black = "\33[30m";
 	$white = "\33[97m";
 	$yellow = "\33[33m";
+
+	// Time passed calc
+	$start_time = \microtime( \true );
 
 	echo \PHP_EOL . 'Starting ReleaseParser tests ...' . \PHP_EOL . \PHP_EOL;
 
@@ -290,8 +297,11 @@ function release_parser_test(): void
 
 		$i++;
 
-		\usleep(15000);
+		// Let tests run slower, so we can actually see if one test fails.
+		//\usleep(10000);
 	}
+
+	echo \PHP_EOL . 'All tests finished in ' . \round( \microtime( \true ) - $start_time, 4 ) . 's' . \PHP_EOL;
 }
 
 
@@ -301,7 +311,7 @@ function release_parser_test(): void
  * @test
  */
 
-function release_parser_test_single(): void
+function release_parser_test_single()
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
 	$release = new ReleaseParser( '24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed', 'tv' );
