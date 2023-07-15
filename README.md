@@ -102,7 +102,7 @@ Array
 If you find any bugs/errors, feel free to [post an issue](https://github.com/pr0pz/scene-release-parser-php/issues).
 
 ### __Similar projects and inspirations__
-- [pr0pz/scene-release-parser](https://github.com/pr0pz/scene-release-parser) (JavaScript)
+- [pr0pz/scene-release-parser](https://github.com/pr0pz/scene-release-parser) - Identical to this project but in JavaScript
 - [matiassingers/scene-release](https://github.com/matiassingers/scene-release) (JavaScript)
 - [thcolin/scene-release-parser-php](https://github.com/thcolin/scene-release-parser-php) (PHP)
 - [majestixx/scene-release-parser-php-lib](https://github.com/majestixx/scene-release-parser-php-lib) (PHP)

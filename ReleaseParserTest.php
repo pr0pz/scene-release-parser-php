@@ -10,7 +10,7 @@ require_once __DIR__ . '/ReleaseParser.php';
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.0.4
+ * @version 1.0.5
  */
 
 /**
@@ -81,7 +81,7 @@ function release_parser_test()
 		],
 		[
 			new ReleaseParser( 'Die.Bourne.Verschwoerung.German.2004.INTERNAL.No.Bock.uff.Proper.READ.NFO.AC3.Dubbed.DL.DVDR-Cinemaniacs', 'DVDR' ),
-			'Title: Die Bourne Verschwoerung / Group: Cinemaniacs / Year: 2004 / Flags: AC3 Dubbed, Internal, PROPER, READNFO / Source: DVD / Format: DVDR / Language: German, Multilingual / Type: Movie'
+			'Title: Die Bourne Verschwoerung / Group: Cinemaniacs / Year: 2004 / Flags: AC3 Dubbed, Internal, Proper, READNFO / Source: DVD / Format: DVDR / Language: German, Multilingual / Type: Movie'
 		],
 		[
 			new ReleaseParser( 'Gegen.den.Strom.2018.German.AC3D.DL.1080p.BluRay.x264-SAVASTANOS', 'X264' ),
@@ -91,6 +91,17 @@ function release_parser_test()
 		[
 			new ReleaseParser( 'Burial.Ground.The.Nights.Of.Terror.1981.DUBBED.GRINDHOUSE.VERSION.1080P.BLURAY.X264-WATCHABLE', 'X264' ),
 			'Title: Burial Ground The Nights Of Terror / Group: WATCHABLE / Year: 1981 / Flags: Dubbed / Source: Bluray / Format: x264 / Resolution: 1080p / Type: Movie'
+		],
+
+		[
+			new ReleaseParser( 'Batman.v.Superman.Dawn.of.Justice.2016.IMAX.German.DL.TrueHD.Atmos.DUBBED.2160p.UHD.BluRay.x265-GSG9', 'PRE' ),
+			'Title: Batman v Superman Dawn of Justice / Group: GSG9 / Year: 2016 / Flags: Dubbed, IMAX, UHD / Source: Bluray / Format: x265 / Resolution: 2160p / Audio: Dolby Atmos, Dolby trueHD / Language: German, Multilingual / Type: Movie'
+		],
+
+		// Movies #7 - lots of flags
+		[
+			new ReleaseParser( 'Wonder.Woman.1984.2020.IMAX.German.UHDBD.2160p.DV.HDR10.HEVC.TrueHD.DL.Remux-pmHD', '0DAY' ),
+			'Title: Wonder Woman 1984 / Group: pmHD / Year: 2020 / Flags: Dolby Vision, HDR, IMAX, Remux / Source: UHDBD / Format: HEVC / Resolution: 2160p / Audio: Dolby trueHD / Language: German, Multilingual / Type: Movie'
 		],
 
 		// TV
@@ -120,7 +131,7 @@ function release_parser_test()
 		],
 		[ // Whole season without episode
 			new ReleaseParser( 'Riverdale.US.S05.PROPER.FRENCH.WEB.x264-STRINGERBELL', 'tv' ),
-			'Title: Riverdale US / Group: STRINGERBELL / Season: 5 / Flags: PROPER / Source: WEB / Format: x264 / Language: French / Type: TV'
+			'Title: Riverdale US / Group: STRINGERBELL / Season: 5 / Flags: Proper / Source: WEB / Format: x264 / Language: French / Type: TV'
 		],
 		[ // Episode is 0 (needs dirfix but works)
 			new ReleaseParser( '72.Cutest.Animals.S01E0.German.DL.Doku.1080p.WEB.x264-BiGiNT', 'tv' ),

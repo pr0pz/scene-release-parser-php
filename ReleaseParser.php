@@ -9,7 +9,7 @@ require_once __DIR__ . '/ReleasePatterns.php';
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.0.4
+ * @version 1.0.5
  */
 
 class ReleaseParser extends ReleasePatterns
