@@ -327,17 +327,15 @@ function release_parser_test()
 function release_parser_test_single()
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
-	$release = new ReleaseParser( '24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed', 'tv' );
+	$release = new ReleaseParser( 'Ultimate.Expedition.S01E01.Weve.All.Got.A.Screw.Loose.2160p.iNTERNAL.WEB.HDR.VP9-13', 'TV-HD' );
 
 	// Check if expectation matches parsed.
 	echo '  [Parsed] ' . $release . \PHP_EOL;
-	echo '[Expected] Show: 24 / Title: 9 00 Uhr bis 10 00 Uhr / Group: c0nFuSed / Season: 2 / Episode: 2 / Flags: READNFO, TV Dubbed / Source: DVDRip / Format: SVCD / Language: German, Multilingual / Type: TV' . \PHP_EOL . \PHP_EOL;
+	echo '[Expected] Show: Ultimate Expedition / Title: Weve All Got A Screw Loose / Group: 13 / Season: 1 / Episode: 1 / Flags: HDR, Internal / Format: VP9 / Resolution: 2160p / Type: TV' . \PHP_EOL . \PHP_EOL;
 	
-	// Check how var_dump putput looks like
-	echo '[print_r similar to var_dump]' . \PHP_EOL;
 	\print_r( $release );
 }
 
 // Do tests.
 release_parser_test();
-//release_parser_test_single();
+release_parser_test_single();
