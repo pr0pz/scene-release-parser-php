@@ -10,7 +10,7 @@ require_once __DIR__ . '/ReleaseParser.php';
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.0.5
+ * @version 1.1.0
  */
 
 /**
@@ -51,7 +51,7 @@ function release_parser_test()
 		// Apps
 		[
 			new ReleaseParser( 'RSP.OGG.Vorbis.Player.OCX.v2.5.0-Lz0', 'Apps' ),
-			'Title: RSP OGG Vorbis Player OCX / Group: Lz0 / Audio: OGG / Version: 2.5.0 / Type: App'
+			'Title: RSP OGG Vorbis Player OCX / Group: Lz0 / Version: 2.5.0 / Type: App'
 		],
 		[
 			new ReleaseParser( 'ActiveState.Visual.Python.for.VS.2003.v1.8.1.2082.WinNT2K.Incl.Keygenerator-TMG', 'Games' ),
@@ -69,11 +69,19 @@ function release_parser_test()
 			new ReleaseParser( 'QUIZWARE.PRACTICE.TESTS.FOR.COMPUTER.ASSOCIATES.CERTIFICATIONS.V4.84-JGT', 'ebook' ),
 			'Title: Quizware Practice Tests For Computer Associates Certifications / Group: JGT / Version: 4.84 / Type: App'
 		],
+		[
+			new ReleaseParser( 'SurCode.DVD.Professional.DTS.Encoder.v1.0.21.Retail-iNTENSiON', 'Apps' ),
+			'Title: SurCode DVD Professional DTS Encoder / Group: iNTENSiON / Flags: Retail / Version: 1.0.21 / Type: App'
+		],
+		[
+			new ReleaseParser( 'Schweighofer.Win1A.Lohn.v23.10.4.0.German.WinALL.Incl.Keygen-BLiZZARD', 'Apps' ),
+			'Title: Schweighofer Win1A Lohn / Group: BLiZZARD / Flags: KEYGEN / Os: Windows / Version: 23.10.4.0 / Language: German / Type: App'
+		],
 
 		// Movies (usually a lot of flags for testing)
 		[
 			new ReleaseParser( 'Harry.Potter.und.die.Kammer.des.Schreckens.TS.Line.Dubbed.German.INTERNAL.VCD.CD2.REPACK-TGSC', 'Apps' ),
-			'Title: Harry Potter und die Kammer des Schreckens / Group: TGSC / Flags: Internal, Line dubbed, Repack / Source: TS / Format: VCD / Language: German / Type: Movie'
+			'Title: Harry Potter und die Kammer des Schreckens / Group: TGSC / Flags: Internal, Line dubbed, Repack / Source: Telesync / Format: VCD / Language: German / Type: Movie'
 		],
 		[
 			new ReleaseParser( 'Sweet.Home.Alabama.SCREENER.Line.Dubbed.German.VCD-TGSC', 'Screener' ),
@@ -81,7 +89,7 @@ function release_parser_test()
 		],
 		[
 			new ReleaseParser( 'Die.Bourne.Verschwoerung.German.2004.INTERNAL.No.Bock.uff.Proper.READ.NFO.AC3.Dubbed.DL.DVDR-Cinemaniacs', 'DVDR' ),
-			'Title: Die Bourne Verschwoerung / Group: Cinemaniacs / Year: 2004 / Flags: AC3 Dubbed, Internal, Proper, READNFO / Source: DVD / Format: DVDR / Language: German, Multilingual / Type: Movie'
+			'Title: Die Bourne Verschwoerung / Group: Cinemaniacs / Year: 2004 / Flags: Dubbed, Internal, Proper, READNFO / Source: DVD / Format: DVDR / Audio: AC3 / Language: German, Multilingual / Type: Movie'
 		],
 		[
 			new ReleaseParser( 'Gegen.den.Strom.2018.German.AC3D.DL.1080p.BluRay.x264-SAVASTANOS', 'X264' ),
@@ -102,6 +110,18 @@ function release_parser_test()
 		[
 			new ReleaseParser( 'Wonder.Woman.1984.2020.IMAX.German.UHDBD.2160p.DV.HDR10.HEVC.TrueHD.DL.Remux-pmHD', '0DAY' ),
 			'Title: Wonder Woman 1984 / Group: pmHD / Year: 2020 / Flags: Dolby Vision, HDR, IMAX, Remux / Source: UHDBD / Format: HEVC / Resolution: 2160p / Audio: Dolby trueHD / Language: German, Multilingual / Type: Movie'
+		],
+
+		// Movies #8 - Multiple Audio
+		[
+			new ReleaseParser( 'Cloudy.With.A.Chance.Of.Meatballs.2009.NORDIC.DTS-HD.DTS.AC3.NORDICSUBS.1080p.BluRay.x264-TUSAHD', 'X264' ),
+			'Title: Cloudy With A Chance Of Meatballs / Group: TUSAHD / Year: 2009 / Flags: Subbed / Source: Bluray / Format: x264 / Resolution: 1080p / Audio: AC3, DTS, DTS-HD / Language: Nordic / Type: Movie'
+		],
+
+		// Movies #9 - P2P lota of stuff
+		[
+			new ReleaseParser( 'Angel.Heart.1987.German.DTSMAD.5.1.DL.2160p.UHD.BluRay.HDR.DV.HEVC.Remux-HDSource', 'BLuray' ),
+			'Title: Angel Heart / Group: HDSource / Year: 1987 / Flags: Dolby Vision, HDR, Remux, UHD / Source: Bluray / Format: HEVC / Resolution: 2160p / Audio: DTS-HD MA, 5.1 / Language: German, Multilingual / Type: Movie'
 		],
 
 		// TV
@@ -138,6 +158,11 @@ function release_parser_test()
 			'Title: 72 Cutest Animals / Group: BiGiNT / Season: 1 / Episode: 0 / Flags: Doku / Source: WEB / Format: x264 / Resolution: 1080p / Language: German, Multilingual / Type: TV'
 		],
 
+		[ // P2P with multi Audio and no extra title
+			new ReleaseParser( 'Gilmore.Girls.S05E01.720p.WEB-DL.AAC2.0.H.264-tK', 'tv' ),
+			'Title: Gilmore Girls / Group: tK / Season: 5 / Episode: 1 / Source: WEB / Format: h264 / Resolution: 720p / Audio: AAC, 2.0 / Type: TV'
+		],
+
 		// TV SPorts
 		[
 			new ReleaseParser( 'NFL.2021.09.26.49ers.Vs.Packers.1080p.WEB.h264-SPORTSNET', 'tv' ),
@@ -150,6 +175,10 @@ function release_parser_test()
 		[
 			new ReleaseParser( 'WWE.Friday.Night.Smackdown.2021-09-10.German.HDTVRiP.x264-SPORTY', 'tv' ),
 			'Title: WWE Friday Night Smackdown / Group: SPORTY / Year: 2021 / Date: 10.09.2021 / Source: HDTV / Format: x264 / Language: German / Type: TV'
+		],
+		[ // Only year and no TV source
+			new ReleaseParser( 'Formula1.2023.Hungarian.Grand.Prix.Practice.Two.1080p.WEB.h264-VERUM', 'X264' ),
+			'Show: Formula1 / Title: Hungarian Grand Prix Practice Two / Group: VERUM / Year: 2023 / Source: WEB / Format: h264 / Resolution: 1080p / Type: TV'
 		],
 
 		// Anime
@@ -219,27 +248,27 @@ function release_parser_test()
 		],
 		[ // Comic with title, title_extra and issue number (No.04)
 			new ReleaseParser( 'Viper.Comics.-.Ichabod.Jones.Monster.Hunter.No.04.2012.Hybrid.Comic.eBook-BitBook', 'ebook' ),
-			'Author: Viper Comics / Title: Ichabod Jones Monster Hunter / Group: BitBook / Year: 2012 / Episode: 4 / Flags: Comic, eBook / Format: Hybrid / Type: eBook'
+			'Author: Viper Comics / Title: Ichabod Jones Monster Hunter / Group: BitBook / Year: 2012 / Issue: 4 / Flags: Comic, eBook / Format: Hybrid / Type: eBook'
 		],
 		[ // Basic magazine with issue number (No.314)
 			new ReleaseParser( 'EDGE.No.314.2018.HYBRiD.MAGAZiNE.eBook-PAPERCLiPS', 'ebook' ),
-			'Title: EDGE / Group: PAPERCLiPS / Year: 2018 / Episode: 314 / Flags: eBook, Magazine / Format: Hybrid / Type: eBook'
+			'Title: EDGE / Group: PAPERCLiPS / Year: 2018 / Issue: 314 / Flags: eBook, Magazine / Format: Hybrid / Type: eBook'
 		],
 		[ // Other version of issue number (N119)
 			new ReleaseParser( 'Prog.N119.2021.RETAiL.MAGAZiNE.eBook-PRiNTER', 'ebook' ),
-			'Title: Prog / Group: PRiNTER / Year: 2021 / Episode: 119 / Flags: eBook, Magazine, Retail / Type: eBook'
+			'Title: Prog / Group: PRiNTER / Year: 2021 / Issue: 119 / Flags: eBook, Magazine, Retail / Type: eBook'
 		],
 		[ // Other version of issue number (Band)
 			new ReleaseParser( 'Die.Enwor.Saga.Band.05.-.Das.Schwarze.Schiff.German.Ebook-Elements', 'ebook' ),
-			'Author: Die Enwor Saga / Title: Das Schwarze Schiff / Group: Elements / Episode: 5 / Flags: eBook / Language: German / Type: eBook'
+			'Author: Die Enwor Saga / Title: Das Schwarze Schiff / Group: Elements / Issue: 5 / Flags: eBook / Language: German / Type: eBook'
 		],
 		[ // Other version of issue number (Issue)
 			new ReleaseParser( 'The.Amazing.Spiderman.Issue.501.January.2004.Comic.eBook-Dementia', 'ebook' ),
-			'Title: The Amazing Spiderman / Group: Dementia / Year: 2004 / Date: 01.01.2004 / Episode: 501 / Flags: Comic, eBook / Type: eBook'
+			'Title: The Amazing Spiderman / Group: Dementia / Year: 2004 / Date: 01.01.2004 / Issue: 501 / Flags: Comic, eBook / Type: eBook'
 		],
 		[ // Other version of issue number
 			new ReleaseParser( 'Simpsons.Comics.Ausgabe.15.Januar.1998.German.Comic.eBook-HS', 'ebook' ),
-			'Title: Simpsons Comics / Group: HS / Year: 1998 / Date: 01.01.1998 / Episode: 15 / Flags: Comic, eBook / Language: German / Type: eBook'
+			'Title: Simpsons Comics / Group: HS / Year: 1998 / Date: 01.01.1998 / Issue: 15 / Flags: Comic, eBook / Language: German / Type: eBook'
 		],
 		[ // title + title_extra + special date formatting (15 Januar 2004)
 			new ReleaseParser( 'Concorde.-.Die.Traumer.15.Januar.2004.Presseheft.German.Ebook-Elements', 'ebook' ),
@@ -251,7 +280,7 @@ function release_parser_test()
 		],
 		[ // Issue is 0
 			new ReleaseParser( 'IDW.-.Machete.No.0.2010.Hybrid.Comic.eBook-BitBook', 'ebook' ),
-			'Author: IDW / Title: Machete / Group: BitBook / Year: 2010 / Episode: 0 / Flags: Comic, eBook / Format: Hybrid / Type: eBook'
+			'Author: IDW / Title: Machete / Group: BitBook / Year: 2010 / Issue: 0 / Flags: Comic, eBook / Format: Hybrid / Type: eBook'
 		],
 
 		// Abook
@@ -327,15 +356,48 @@ function release_parser_test()
 function release_parser_test_single()
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
-	$release = new ReleaseParser( 'Ultimate.Expedition.S01E01.Weve.All.Got.A.Screw.Loose.2160p.iNTERNAL.WEB.HDR.VP9-13', 'TV-HD' );
+	$release_name = 'SurCode.DVD.Professional.DTS.Encoder.v1.0.21.Retail-iNTENSiON';
+	$release = new ReleaseParser( $release_name );
 
 	// Check if expectation matches parsed.
+	echo '[Original] ' . $release_name . \PHP_EOL;
 	echo '  [Parsed] ' . $release . \PHP_EOL;
-	echo '[Expected] Show: Ultimate Expedition / Title: Weve All Got A Screw Loose / Group: 13 / Season: 1 / Episode: 1 / Flags: HDR, Internal / Format: VP9 / Resolution: 2160p / Type: TV' . \PHP_EOL . \PHP_EOL;
-	
+	echo '[Expected] Title: SurCode DVD Professional DTS Encoder / Group: iNTENSiON / Flags: Retail / Version: 1.0.21 / Type: App' . \PHP_EOL . \PHP_EOL;
+
 	\print_r( $release );
+}
+
+
+/**
+ * Read release names fomr file for faster checking.
+ * Filename: releases.txt
+ * 
+ * @test
+ */
+
+function release_parser_test_file()
+{
+	$handle = \fopen( __DIR__ . '/releases.txt', 'r');
+
+	if ( $handle )
+	{
+		$counter = 1;
+		while ( ($line = \fgets( $handle ) ) !== \false)
+		{
+			echo $counter . ' > ' . $line;
+			echo $counter . ' > ' . new ReleaseParser( $line ) . \PHP_EOL . \PHP_EOL;
+			$counter++;
+		}
+
+		fclose( $handle );
+	}
+	else
+	{
+		echo 'Failed to open the file';
+	}
 }
 
 // Do tests.
 release_parser_test();
-release_parser_test_single();
+//release_parser_test_single();
+//release_parser_test_file();

@@ -9,7 +9,7 @@ require_once __DIR__ . '/ReleasePatterns.php';
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.0.5
+ * @version 1.1.0
  */
 
 class ReleaseParser extends ReleasePatterns
@@ -142,6 +142,10 @@ class ReleaseParser extends ReleasePatterns
 				}
 			}
 
+			// Set ebook episode to Issue
+			if ( $this->get( 'type' ) === 'eBook' && $information === 'episode' )
+				$information = 'Issue';
+
 			// Value set?
 			if ( isset( $information_value ) )
 			{
@@ -213,6 +217,12 @@ class ReleaseParser extends ReleasePatterns
 
 				// Check for language tag (exclude "grand" for formula1 rls)
 				\preg_match( $regex, $this->release, $matches );
+
+
+				if ( preg_last_error() && \str_contains( $regex, '?<!' ) )
+				{
+					echo $regex . PHP_EOL;
+				}
 
 				if ( !empty( $matches ) )
 					$language_codes[] = $language_code_key;
@@ -503,8 +513,11 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseVersion()
 	{
-		\preg_match( '/[._-]' . self::REGEX_VERSION . '[._-]/i', $this->release, $matches );
-		if ( !empty( $matches ) ) $this->set( 'version', $matches[1] );
+		// Cleanup release name for better matching
+		$release_name_cleaned = $this->cleanup( $this->release, [ 'flags', 'device' ] );
+
+		\preg_match( '/[._-]' . self::REGEX_VERSION . '[._-]/i', $release_name_cleaned, $matches );
+		if ( !empty( $matches ) ) $this->set( 'version', \trim( $matches[1], '.' ) );
 	}
 
 
@@ -761,7 +774,8 @@ class ReleaseParser extends ReleasePatterns
 		// Games = if device was found or game related flags
 		else if (
 			!empty( $this->get( 'device' ) ) ||
-			$this->hasAttribute( [ 'DLC', 'DLC Unlocker' ], 'flags' ) )
+			$this->hasAttribute( [ 'DLC', 'DLC Unlocker' ], 'flags' ) ||
+			$this->hasAttribute( self::SOURCES_GAMES, 'source' ) )
 		{
 			$type = 'Game';
 		}
@@ -780,9 +794,11 @@ class ReleaseParser extends ReleasePatterns
 		{
 			$type = 'XXX';
 		}
-
-		// Check for Sports programs
-		//$sports = [ 'NFL', 'NHL', 'MLB', 'Formula1', 'Premier.League', 'La[._-]?Liga', 'Eredivisie', 'Bundesliga', 'Ligue[._-]?1'];
+		// If matches sports, probably TV
+		else if ( \preg_match( self::REGEX_SPORTS, $this->get( 'release' ) ) )
+		{
+			$type = 'TV';
+		}
 
 		return $type;
 	}
@@ -932,7 +948,7 @@ class ReleaseParser extends ReleasePatterns
 				$regex_used = 'REGEX_TITLE_APP';
 
 				// Search and replace pattern in regex pattern for better macthing
-				$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'source' ] );
+				//$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'source' ] );
 
 				// Match title
 				\preg_match( $regex_pattern, $release_name_cleaned, $matches );
@@ -967,7 +983,8 @@ class ReleaseParser extends ReleasePatterns
 					$regex_used .= ' + REGEX_TITLE_TV_EPISODE';
 
 					// Search and replace pattern in regex pattern for better macthing
-					$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] );
+					//$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] );
+					$release_name_cleaned = $this->cleanup( $release_name_cleaned, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] );
 
 					// Match episode title
 					\preg_match( $regex_pattern, $release_name_cleaned, $matches );
@@ -1167,7 +1184,7 @@ class ReleaseParser extends ReleasePatterns
 					$regex_used = 'REGEX_TITLE_MOVIE';
 
 					// Search and replace pattern in regex pattern for better macthing
-					$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'year' ] );
+					$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'year', 'audio' ] );
 
 					// Match title
 					\preg_match( $regex_pattern, $release_name_cleaned, $matches );
@@ -1228,8 +1245,8 @@ class ReleaseParser extends ReleasePatterns
 			// We need to catch the web source
 			if ( $attr_key === 'WEB' )
 			{
-				$attr_pattern = $attr_pattern . '[._\)-](%year%|%format%|%language%|%group%)';
-				$attr_pattern = $this->cleanupPattern( $this->release, $attr_pattern, [ 'format', 'group', 'language',  'year' ] );
+				$attr_pattern = $attr_pattern . '[._\)-](%year%|%format%|%language%|%group%|%audio%)';
+				$attr_pattern = $this->cleanupPattern( $this->release, $attr_pattern, [ 'format', 'group', 'language', 'year', 'audio' ] );
 			}
 
 			// Transform all attribute values to array (simpler, so we just loop everything)
@@ -1238,7 +1255,7 @@ class ReleaseParser extends ReleasePatterns
 
 			// Loop attribute values
 			foreach ( $attr_pattern as $pattern )
-			{
+			{				
 				// Check if pattern is inside release name
 				\preg_match( '/[._\(-]' . $pattern . '[._\)-]/i', $this->release, $matches );
 				//\preg_match( '/[._\(-]' . $pattern . '[._\)-]/i', $this->release, $matches,  \PREG_OFFSET_CAPTURE );
@@ -1334,6 +1351,21 @@ class ReleaseParser extends ReleasePatterns
 				// Get proper attr value
 				switch ( $information )
 				{
+					case 'audio':
+						// Check if we need to loop array
+						if ( \is_array( $information_value ) )
+						{
+							foreach ( $information_value as $audio )
+							{
+								$attributes[] = self::AUDIO[ $audio ];
+							}
+						}
+						else
+						{
+							$attributes[] = self::AUDIO[ $information_value ];
+						}
+						break;
+					
 					case 'daymonth':
 						// Clean up day and month number from rls
 						$attributes = [
@@ -1341,6 +1373,10 @@ class ReleaseParser extends ReleasePatterns
 							$information_value->format( 'j' ) . '(th|rd|nd|st)?',
 							$information_value->format( 'm' )
 						];
+						break;
+					
+					case 'device':
+						$attributes[] = self::DEVICE[ $information_value ];
 						break;
 
 					case 'format':
@@ -1647,6 +1683,20 @@ class ReleaseParser extends ReleasePatterns
 			if ( $this->get( 'version' ) !== \null )
 			{
 				$this->set( 'version', \null );
+			}
+		}
+		else if ( $this->get( 'type' ) === 'App' )
+		{
+			// Remove audio if it's an App (falsely parsed from release name)
+			if ( $this->get( 'audio' ) !== \null )
+			{
+				$this->set( 'audio', \null );
+			}
+
+			// Remove source if it's inside title
+			if ( $this->get( 'source' ) !== null && \str_contains( $this->get( 'title' ), $this->get( 'source' ) ) )
+			{
+				$this->set( 'source', null );
 			}
 		}
 	}
