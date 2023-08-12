@@ -5,11 +5,11 @@ namespace ReleaseParser;
 require_once __DIR__ . '/ReleasePatterns.php';
 
 /**
- * ReleaseParser - A tool for parsing scene release names.
+ * ReleaseParser - A library for parsing scene release names.
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 class ReleaseParser extends ReleasePatterns
@@ -26,6 +26,7 @@ class ReleaseParser extends ReleasePatterns
 		'date'			=> \null,
 		'season'		=> \null, // For TV rls
 		'episode'		=> \null, // For TV/Audiobook/Ebook (issue) rls
+		'disc'			=> \null, // For complete disc releases
 		'flags'			=> \null, // Misc rls name flags
 		'source'		=> \null,
 		'format'		=> \null, // Rls format/encoding
@@ -71,6 +72,7 @@ class ReleaseParser extends ReleasePatterns
 		$this->parseAudio();			// For Video rls: Audio format
 		$this->parseLanguage();		// Array with language code as key and name as value (in english)
 		$this->parseSource();			// Source (2nd time, for right web source)
+		$this->parseFlags();			// Flags (2nd time)
 		$this->parseType( $section );
 		$this->parseTitle();			// Title and extra title
 		$this->cleanupAttributes();	// Clean up unneeded and falsely parsed attributes
@@ -141,6 +143,12 @@ class ReleaseParser extends ReleasePatterns
 					}
 				}
 			}
+			else
+			{
+				// Sports without extra title
+				if ( $this->get( 'type' ) === 'Sports' && $information === 'title' )
+					$information = 'Name';
+			}
 
 			// Set ebook episode to Issue
 			if ( $this->get( 'type' ) === 'eBook' && $information === 'episode' )
@@ -199,7 +207,7 @@ class ReleaseParser extends ReleasePatterns
 	{
 		$language_codes = [];
 
-		// Search and replace pattern in regex pattern for better macthing
+		// Search and replace pattern in regex pattern for better matching
 		$regex_pattern = $this->cleanupPattern( $this->release, self::REGEX_LANGUAGE, [ 'audio', 'device', 'flags', 'format', 'group', 'os', 'resolution', 'source', 'year' ] );
 
 		// Loop all languages
@@ -476,7 +484,7 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseFlags()
 	{
-		$flags = $this->parseAttribute( self::FLAGS );
+		$flags = $this->parseAttribute( self::FLAGS, 'flags' );
 
 		if ( !empty( $flags ) )
 		{
@@ -515,8 +523,8 @@ class ReleaseParser extends ReleasePatterns
 	{
 		// Cleanup release name for better matching
 		$release_name_cleaned = $this->cleanup( $this->release, [ 'flags', 'device' ] );
-
-		\preg_match( '/[._-]' . self::REGEX_VERSION . '[._-]/i', $release_name_cleaned, $matches );
+		$regex_pattern = '/[._-]' . self::REGEX_VERSION . '[._-]/i';
+		\preg_match( $regex_pattern, $release_name_cleaned, $matches );
 		if ( !empty( $matches ) ) $this->set( 'version', \trim( $matches[1], '.' ) );
 	}
 
@@ -528,7 +536,7 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseSource()
 	{
-		$source = $this->parseAttribute( self::SOURCE );
+		$source = $this->parseAttribute( self::SOURCE, 'source' );
 
 		if ( !empty( $source ) )
 		{
@@ -546,7 +554,7 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseFormat()
 	{
-		$format = $this->parseAttribute( self::FORMAT );
+		$format = $this->parseAttribute( self::FORMAT, 'format' );
 
 		if ( !empty( $format ) )
 		{
@@ -649,6 +657,15 @@ class ReleaseParser extends ReleasePatterns
 				$this->set( 'episode', $episode );
 			}
 		}
+		else
+		{
+			\preg_match( '/[._-]' . self::REGEX_DISC . '[._-]/i', $this->release, $matches );
+
+			if ( !empty( $matches ) )
+			{
+				$this->set( 'disc', (int) $matches[1] );
+			}
+		}
 	}
 
 
@@ -689,8 +706,13 @@ class ReleaseParser extends ReleasePatterns
 			// Default to TV
 			$type = 'TV';
 
+			// Match sports events
+			if ( \preg_match( self::REGEX_SPORTS, $this->release ) )
+			{
+				$type = 'Sports';
+			}
 			// Anime (can have episodes) = if we additionaly have an anime flag in rls name
-			if ( $this->hasAttribute( self::FLAGS_ANIME, 'flags' ) )
+			else if ( $this->hasAttribute( self::FLAGS_ANIME, 'flags' ) )
 			{
 				$type = 'Anime';
 			}
@@ -726,6 +748,11 @@ class ReleaseParser extends ReleasePatterns
 			{
 				$type = 'Music';
 			}
+		}
+		// Match sports events
+		else if ( \preg_match( self::REGEX_SPORTS, $this->release ) )
+		{
+			$type = 'Sports';
 		}
 		// Has date and a resolution? probably TV
 		else if (
@@ -854,7 +881,7 @@ class ReleaseParser extends ReleasePatterns
 	private function parseTitle()
 	{
 		$type = \strtolower( $this->get( 'type' ) );
-		$release_name_cleaned = $this->release;
+		$release_name_cleaned = \str_replace( ',', '', $this->release );
 
 		// Main title vars
 		$title = $title_extra = \null;
@@ -886,7 +913,7 @@ class ReleaseParser extends ReleasePatterns
 					$regex_used = 'REGEX_TITLE_MVID';
 				}
 
-				// Search and replace pattern in regex pattern for better macthing
+				// Search and replace pattern in regex pattern for better matching
 				$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'audio', 'flags', 'format', 'group', 'language', 'source' ] );
 
 				// Special check for date:
@@ -911,7 +938,7 @@ class ReleaseParser extends ReleasePatterns
 					if ( !empty( $title_splitted ) )
 					{
 						// First value is the artist = title
-						// We need the . for proper macthing cleanup episode.
+						// We need the . for proper matching cleanup episode.
 						$title = $this->cleanup( '.' . $title_splitted[0], 'episode' );
 
 						// Unset this before the loop
@@ -921,16 +948,35 @@ class ReleaseParser extends ReleasePatterns
 						$separator = $type === 'abook' ? ' - ' : '-';
 
 						// Loop remaining parts and set title extra
+						$i = 0;
 						foreach( $title_splitted as $title_part )
 						{
-							// We need the . for proper macthing cleanup episode.
+							// We need the . for proper matching cleanup episode.
 							$title_part = $this->cleanup( '.' . $title_part . '.', 'episode' );
 							$title_part = \trim( $title_part, '.' );
 
 							if ( !empty( $title_part ) )
 							{
-								$title_extra = !empty( $title_extra ) ? $title_extra . $separator . $title_part : $title_part;
+								// First index is ok
+								if (
+									$i === 0 ||
+									(
+										// Other indexes ...
+										$i > 0 &&
+										(
+											// ...only with certain chars
+											\str_contains( $title_part, '_' ) ||
+											\str_contains( $title_part, ')' ) ||
+											\is_numeric( $title_part )
+										)
+									)
+								)
+								{
+									$title_extra = !empty( $title_extra ) ? $title_extra . $separator . $title_part : $title_part;
+								}
 							}
+
+							$i++;
 						}
 					}
 					break;
@@ -947,8 +993,9 @@ class ReleaseParser extends ReleasePatterns
 				$regex_pattern = self::REGEX_TITLE_APP;
 				$regex_used = 'REGEX_TITLE_APP';
 
-				// Search and replace pattern in regex pattern for better macthing
+				// Search and replace pattern in regex pattern for better matching
 				//$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'source' ] );
+				$regex_pattern = $this->cleanupPattern( $release_name_cleaned, $regex_pattern, [ 'device' ] );
 
 				// Match title
 				\preg_match( $regex_pattern, $release_name_cleaned, $matches );
@@ -964,13 +1011,18 @@ class ReleaseParser extends ReleasePatterns
 
 			// TV series
 			case 'tv':
+			case 'sports':
 
 				// Setup regex pattern
 				$regex_pattern = self::REGEX_TITLE_TV;
 				$regex_used = 'REGEX_TITLE_TV';
 
+				// Only needed here for releases that have episodes
+				// Maybe year is before episode and have to be removed
+				$release_name_no_year = $this->cleanup( $release_name_cleaned, [ 'year' ] );
+
 				// Match title
-				\preg_match( $regex_pattern, $release_name_cleaned, $matches );
+				\preg_match( $regex_pattern, $release_name_no_year, $matches );
 
 				// Check for matches with regex title tv
 				if ( !empty( $matches ) )
@@ -982,7 +1034,7 @@ class ReleaseParser extends ReleasePatterns
 					$regex_pattern = self::REGEX_TITLE_TV_EPISODE;
 					$regex_used .= ' + REGEX_TITLE_TV_EPISODE';
 
-					// Search and replace pattern in regex pattern for better macthing
+					// Search and replace pattern in regex pattern for better matching
 					//$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] );
 					$release_name_cleaned = $this->cleanup( $release_name_cleaned, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] );
 
@@ -1000,7 +1052,7 @@ class ReleaseParser extends ReleasePatterns
 					$regex_pattern = self::REGEX_TITLE_TV_DATE;
 					$regex_used = 'REGEX_TITLE_TV_DATE';
 
-					// Search and replace pattern in regex pattern for better macthing
+					// Search and replace pattern in regex pattern for better matching
 					$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'regex_date', 'year' ] );
 
 					// Match Dated/Sports match title
@@ -1039,7 +1091,7 @@ class ReleaseParser extends ReleasePatterns
 					$regex_pattern = self::REGEX_TITLE_TV_EPISODE;
 					$regex_used .= ' + REGEX_TITLE_TV_EPISODE';
 
-					// Search and replace pattern in regex pattern for better macthing
+					// Search and replace pattern in regex pattern for better matching
 					$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] );
 
 					// Match episode title
@@ -1060,7 +1112,7 @@ class ReleaseParser extends ReleasePatterns
 				$regex_pattern = !empty( $this->get( 'date' ) ) ? self::REGEX_TITLE_XXX_DATE : self::REGEX_TITLE_XXX;
 				$regex_used = !empty( $this->get( 'date' ) ) ? 'REGEX_TITLE_XXX_DATE' : 'REGEX_TITLE_XXX';
 
-				// Search and replace pattern in regex pattern for better macthing
+				// Search and replace pattern in regex pattern for better matching
 				$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'year', 'language', 'source', 'regex_date', 'regex_date_monthname' ] );
 
 				// Match title
@@ -1089,7 +1141,7 @@ class ReleaseParser extends ReleasePatterns
 				// Cleanup release name for better matching
 				$release_name_cleaned = $this->cleanup( $release_name_cleaned, 'episode' );
 
-				// Search and replace pattern in regex pattern for better macthing
+				// Search and replace pattern in regex pattern for better matching
 				$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'regex_date', 'regex_date_monthname', 'year' ] );
 
 				// Match title
@@ -1154,7 +1206,7 @@ class ReleaseParser extends ReleasePatterns
 				$regex_pattern = self::REGEX_TITLE_TV_DATE;
 				$regex_used = 'REGEX_TITLE_TV_DATE';
 
-				// Search and replace pattern in regex pattern for better macthing
+				// Search and replace pattern in regex pattern for better matching
 				$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] );
 
 				// Cleanup release name for better matching
@@ -1183,7 +1235,7 @@ class ReleaseParser extends ReleasePatterns
 					$regex_pattern = self::REGEX_TITLE_MOVIE;
 					$regex_used = 'REGEX_TITLE_MOVIE';
 
-					// Search and replace pattern in regex pattern for better macthing
+					// Search and replace pattern in regex pattern for better matching
 					$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'year', 'audio' ] );
 
 					// Match title
@@ -1218,7 +1270,9 @@ class ReleaseParser extends ReleasePatterns
 		$this->set( 'debug', $regex_used . ': ' . $regex_pattern );
 
 		// Sanitize and set title
-		$this->set( 'title', $this->sanitize( $title ) );
+		$title = $this->sanitize( $title );
+		$title = $title === 'VA' ? 'Various' : $title;
+		$this->set( 'title', $title );
 
 		// Sanitize and set title extra
 		// Title extra needs to have null as value if empty string.
@@ -1235,7 +1289,7 @@ class ReleaseParser extends ReleasePatterns
 	 * @param array $attribute Attribute to parse.
 	 * @return mixed $attribute_keys Found attribute value (string or array).
 	 */
-	private function parseAttribute( array $attribute )
+	private function parseAttribute( array $attribute, string $type = '' )
 	{
 		$attribute_keys = [];
 
@@ -1243,11 +1297,12 @@ class ReleaseParser extends ReleasePatterns
 		foreach ( $attribute as $attr_key => $attr_pattern)
 		{
 			// We need to catch the web source
-			if ( $attr_key === 'WEB' )
+			// NOT WORKING good if other stuff comes after web source, so removing it (29.07.2023)
+			/*if ( $attr_key === 'WEB' )
 			{
 				$attr_pattern = $attr_pattern . '[._\)-](%year%|%format%|%language%|%group%|%audio%)';
 				$attr_pattern = $this->cleanupPattern( $this->release, $attr_pattern, [ 'format', 'group', 'language', 'year', 'audio' ] );
-			}
+			}*/
 
 			// Transform all attribute values to array (simpler, so we just loop everything)
 			if ( ! \is_array( $attr_pattern ) )
@@ -1255,23 +1310,73 @@ class ReleaseParser extends ReleasePatterns
 
 			// Loop attribute values
 			foreach ( $attr_pattern as $pattern )
-			{				
+			{
+				// Regex flag = case Insensitive
+				$flags = 'i';
+				// The 'iT' source for iTunes needs to be case sensitive,
+				// so italian language + it as word doesn't get parsed as source = itunes
+				if ( $type === 'source' && $pattern === 'iT' )
+					$flags = '';
+
+				// Some special flags
+				if ( $type === 'flags' )
+				{
+					// Final flag is only right if language comes right after
+					if ( $attr_key === 'Final' )
+						$pattern = $this->cleanupPattern( $this->release, $pattern, 'language' );
+					
+					// New Flag is only right if followed by some movie informations
+					if ( $attr_key === 'New' || $attr_key === 'V2' || $attr_key === 'V3' )
+						$pattern = $this->cleanupPattern( $this->release, $pattern, [ 'format', 'source', 'language', 'resolution' ] );
+				}
+
+				// All separators
+				$separators = '[._-]';
+				// Default regex
+				$regex_pattern = '/(' . $separators . ')' . $pattern . '\1/' . $flags;
+
 				// Check if pattern is inside release name
-				\preg_match( '/[._\(-]' . $pattern . '[._\)-]/i', $this->release, $matches );
-				//\preg_match( '/[._\(-]' . $pattern . '[._\)-]/i', $this->release, $matches,  \PREG_OFFSET_CAPTURE );
+				\preg_match( $regex_pattern, $this->release, $matches );
+
+				// Check if is last keyword before group
+				if ( empty( $matches ) )
+				{
+					$regex_pattern = '/' . $separators . $pattern . '-\w+$/' . $flags;
+					\preg_match( $regex_pattern, $this->release, $matches );
+				}
+
+				// Check with parenthesis
+				if ( empty( $matches ) )
+				{
+					$regex_pattern = '/\(' . $pattern . '\)/' . $flags;
+					\preg_match( $regex_pattern, $this->release, $matches );
+				}
+
+				// No? Recheck with string at end of release name
+				// - only format
+				// - separator only ._
+				// - if group is missing
+				if ( empty( $matches ) && $type === 'format' )
+				{
+					$regex_pattern = '/[._]' . $pattern . '$/' . $flags;
+					\preg_match( $regex_pattern, $this->release, $matches );
+				}
 
 				// Yes? Return attribute array key as value
-				if ( !empty( $matches ) ) {
+				if ( !empty( $matches ) && !\in_array( $attr_key, $attribute_keys ) )
 					$attribute_keys[] = $attr_key;
-				}
 			}
 		}
 
 		// Transform array to string if we have just one value
-		if ( \count( $attribute_keys ) == 1 )
-			$attribute_keys = \implode( $attribute_keys );
+		if ( !empty( $attribute_keys ) )
+		{
+			if ( \count( $attribute_keys ) == 1 )
+				$attribute_keys = \implode( $attribute_keys );
 
-		return $attribute_keys;
+			return $attribute_keys;
+		}
+		return \null;
 	}
 
 
@@ -1319,7 +1424,7 @@ class ReleaseParser extends ReleasePatterns
 
 	/**
 	 * Cleanup release name from given attribute.
-	 * Mostly needed for better title macthing in some cases.
+	 * Mostly needed for better title matching in some cases.
 	 *
 	 * @param string $release_name Original release name.
 	 * @param mixed $information Informations to clean up (string or array).
@@ -1449,6 +1554,11 @@ class ReleaseParser extends ReleasePatterns
 					case 'version':
 						$attributes[] = self::REGEX_VERSION;
 						break;
+					
+					case 'year':
+						$attributes[] = self::REGEX_YEAR_SIMPLE;
+						break;
+
 				}
 
 				// Loop attributes if not empty and preg replace to cleanup
@@ -1699,6 +1809,16 @@ class ReleaseParser extends ReleasePatterns
 				$this->set( 'source', null );
 			}
 		}
+		else if ( $this->get( 'type' ) === 'eBook' )
+		{
+			if ( $this->get( 'format' ) === 'Hybrid' )
+			{
+				// Remove Hybrid flag is format already Hybrid
+				$flags = $this->get( 'flags' );
+				if ( ( $key = array_search( 'Hybrid', $flags ) ) !== \false ) unset( $flags[ $key ] );
+				$this->set( 'flags', $flags );
+			}
+		}
 	}
 
 
@@ -1738,7 +1858,7 @@ class ReleaseParser extends ReleasePatterns
 			$type = !empty( $this->get( 'type') ) ? $this->get( 'type') : '';
 			
 			// Words which should end with a point
-			$special_words_after = [ 'feat', 'ft', 'nr', 'st', 'pt', 'vol' ];
+			$special_words_after = [ 'feat', 'ft', 'incl', '(incl', 'inkl', 'nr', 'st', 'pt', 'vol' ];
 			if ( \strtolower( $type ) != 'app' )
 				$special_words_after[] = 'vs';
 	
