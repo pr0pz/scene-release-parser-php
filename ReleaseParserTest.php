@@ -4,13 +4,13 @@ namespace ReleaseParser;
 // Include ReleaseParser
 require_once __DIR__ . '/ReleaseParser.php';
 
- /**
+/**
  * This is the main test file.
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.2.0
+ * @version 1.2.1
  */
 
 /**
@@ -89,6 +89,11 @@ function release_parser_test()
 		[
 			new ReleaseParser( 'Schweighofer.Win1A.Lohn.v23.10.4.0.German.WinALL.Incl.Keygen-BLiZZARD', 'Apps' ),
 			'Title: Schweighofer Win1A Lohn / Group: BLiZZARD / Flags: KEYGEN / Os: Windows / Version: 23.10.4.0 / Language: German / Type: App'
+		],
+		// Apps #8 - Remove OS from rls name
+		[
+			new ReleaseParser( 'Broforce.Forever.MacOS-I_KnoW', 'Pre' ),
+			'Title: Broforce Forever / Group: I_KnoW / Os: macOS / Type: App'
 		],
 
 		// Movies (usually a lot of flags for testing)
@@ -471,13 +476,14 @@ function release_parser_test()
 function release_parser_test_single()
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
-	$release_name = 'Meschino_-_Romeo-SINGLE-WEB-IT-2023-UOVA';
-	$release = new ReleaseParser( $release_name, 'mp3' );
+	$release_name = 'Broforce.Forever.MacOS-I_KnoW';
+	$release_section = 'pre';
+	$release = new ReleaseParser( $release_name, $release_section );
 
 	// Check if expectation matches parsed.
 	echo '[Original] ' . $release_name . \PHP_EOL;
 	echo '  [Parsed] ' . $release . \PHP_EOL;
-	echo '[Expected] Artist: Meschino / Song: Romeo / Group: UOVA / Year: 2023 / Source: Web Single / Language: Italian / Type: Music' . \PHP_EOL . \PHP_EOL;
+	echo '[Expected] Title: Broforce Forever / Group: I_KnoW / Os: macOS / Type: App' . \PHP_EOL . \PHP_EOL;
 
 	\print_r( $release );
 }

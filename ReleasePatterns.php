@@ -6,7 +6,7 @@ namespace ReleaseParser;
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.2.0
+ * @version 1.2.1
  */
 
 class ReleasePatterns {
@@ -16,7 +16,7 @@ class ReleasePatterns {
 	// %varname% will be replaced with the parsed valued for better macthing.
 
 	// Find language (old: (?!sub))
-	const REGEX_LANGUAGE = '/[._\(-]%language_pattern%[._\)-][._\(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|(?:us|gbr|eng|nl|fi|fr|no|dk|de|se|ice)|multi|ml[._\)-]|dl[._\)-]|dual[._-]|%group%)/i';
+	const REGEX_LANGUAGE = '/[._(-]%language_pattern%[._)-][._(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|(?:us|gbr|eng|nl|fi|fr|no|dk|de|se|ice)|multi|ml[._)-]|dl[._)-]|dual[._-]|%group%)/i';
 	// Find date
 	const REGEX_DATE = '(\d{2}|\d{4})[._-](\d{2})[._-](\d{2}|\d{4})';
 	// Special date with month name: 24th January 2002 / Sep. 2000 day 5 / January 2000 1
@@ -25,7 +25,7 @@ class ReleasePatterns {
 	const REGEX_DATE_MUSIC = '/\([a-z._]+[._-]' . self::REGEX_DATE . '\)/i';
 	// Get right year
 	const REGEX_YEAR_SIMPLE = '(19\d[\dx]|20\d[\dx])';
-	const REGEX_YEAR = '/(?=[\(._-]' . self::REGEX_YEAR_SIMPLE . '[\)._-])/i';
+	const REGEX_YEAR = '/(?=[(._-]' . self::REGEX_YEAR_SIMPLE . '[)._-])/i';
 	// Extract group
 	const REGEX_GROUP = '/-(\w+)$/i';
 	// Extract OS
@@ -39,22 +39,22 @@ class ReleasePatterns {
 	// Season pattern matches: S01E01 / 1x01
 	const REGEX_SEASON = '/[._-](?:[ST](\d+)[._-]?(?:[EDP]+\d+)?|(\d+)(?:x\d+))[._-]/i';
 	// Basic title pattern
-	const REGEX_TITLE = '([\w.\(\)-]+)';
+	const REGEX_TITLE = '([\w.()-]+)';
 	// Good for Ebooks
-	const REGEX_TITLE_EBOOK = '/^' . self::REGEX_TITLE . '[._\(-]+(?:%year%|%language%|%flags%|%format%|%regex_date%|%regex_date_monthname%)[._\)-]/iU';
+	const REGEX_TITLE_EBOOK = '/^' . self::REGEX_TITLE . '[._(-]+(?:%year%|%language%|%flags%|%format%|%regex_date%|%regex_date_monthname%)[._)-]/iU';
 	// Good for Fonts
 	const REGEX_TITLE_FONT = '/^' . self::REGEX_TITLE . '-/i';
 	// Good for Movies
-	const REGEX_TITLE_MOVIE = '/^' . self::REGEX_TITLE . '[._\(-]+(?:%year%|%language%|%source%|%flags%|%format%|%resolution%|%audio%)[._\)-]/iU';
+	const REGEX_TITLE_MOVIE = '/^' . self::REGEX_TITLE . '[._(-]+(?:%year%|%language%|%source%|%flags%|%format%|%resolution%|%audio%)[._)-]/iU';
 	const REGEX_TITLE_MOVIE_EXTRA = '/%year%[._-]' . self::REGEX_TITLE . '[._(-]\.+/iU'; // ungreedy
 	// Music pattern matches: Author_2.0_(Name)-Track_album_title_2.0_-_track_bla_(Extended_edition)-...
 	// Good for music releases and Audiobooks
-	const REGEX_TITLE_MUSIC = '/^' . self::REGEX_TITLE . '(?:\([\w-]+\))?[._\(-]+(?:\(?%source%\)?|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._\)-])/iU';
-	const REGEX_TITLE_ABOOK = '/^' . self::REGEX_TITLE . '[._\(-]+(?:%source%[._\)-]|%year%|%group%|%audio%|%flags%|%format%|%language%[._\)-])/iU';
-	const REGEX_TITLE_MVID = '/^' . self::REGEX_TITLE . '[._\(-]+(?:%source%|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._\)-])/iU';
+	const REGEX_TITLE_MUSIC = '/^' . self::REGEX_TITLE . '(?:\([\w-]+\))?[._(-]+(?:\(?%source%\)?|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._)-])/iU';
+	const REGEX_TITLE_ABOOK = '/^' . self::REGEX_TITLE . '[._(-]+(?:%source%[._)-]|%year%|%group%|%audio%|%flags%|%format%|%language%[._)-])/iU';
+	const REGEX_TITLE_MVID = '/^' . self::REGEX_TITLE . '[._(-]+(?:%source%|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._)-])/iU';
 	// Good for general Software releases (also Games)
 	//const REGEX_TITLE_APP = '/^' . self::REGEX_TITLE . '[._\(-]+(?:' . self::REGEX_VERSION . '[._\(-]?\d|%language%|%flags%|%device%|%format%|%os%|%group%|%source%)/iU';
-	const REGEX_TITLE_APP = '/^' . self::REGEX_TITLE . '[._(-]+(' . self::REGEX_VERSION . '|%device%)[._)-]?/iU'; // ungreedy
+	const REGEX_TITLE_APP = '/^' . self::REGEX_TITLE . '[._(-]+(' . self::REGEX_VERSION . '|%device%|%os%)[._)-]/iU'; // ungreedy
 	// Good for all kind of series (also Anime)
 	const REGEX_TITLE_TV = '/^' . self::REGEX_TITLE . '[._-]' . self::REGEX_EPISODE_TV . '/iU';
 	//const REGEX_TITLE_TV_EPISODE = '/' . self::REGEX_EPISODE_TV . '[._-](?:' . self::REGEX_TITLE . '[._\(-]+)?(?:%language%[._\)-]|%resolution%|%source%|%flags%|%format%)/iU';
@@ -262,8 +262,8 @@ class ReleasePatterns {
 	// Video resolution patterns
 	const RESOLUTION = [
 		'SD' => 'SD',
-		'NTSC' => 'NTSC', // = 480p
-		'PAL' => 'PAL', // = 576p
+		'NTSC' => 'NTSC',	// = 480p
+		'PAL' => 'PAL',		// = 576p
 		'480p' => '480p',
 		'576p' => '576p',
 		'720p' => '720p',

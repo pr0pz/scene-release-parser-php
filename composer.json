@@ -1,6 +1,6 @@
 {
 	"name": "propz/release-parser",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "A library for parsing scene release names into human readable data.",
 	"keywords": [
 		"parser",
@@ -16,7 +16,7 @@
 	],
 	"homepage": "https://github.com/pr0pz/scene-release-parser-php#readme",
 	"readme": "README.md",
-	"time": "2023-08-12",
+	"time": "2023-08-13",
 	"license": "MIT",
 	"autoload": {
 		"classmap": [

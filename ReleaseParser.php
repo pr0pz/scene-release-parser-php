@@ -9,7 +9,7 @@ require_once __DIR__ . '/ReleasePatterns.php';
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.2.0
+ * @version 1.2.1
  */
 
 class ReleaseParser extends ReleasePatterns
@@ -809,6 +809,7 @@ class ReleaseParser extends ReleasePatterns
 		// App = if os is set or software (also game) related flags
 		else if (
 			(
+				!empty( $this->get( 'os' ) ) ||
 				!empty( $this->get( 'version' ) ) ||
 				$this->hasAttribute( self::FLAGS_APPS, 'flags' )
 			) &&
@@ -995,7 +996,7 @@ class ReleaseParser extends ReleasePatterns
 
 				// Search and replace pattern in regex pattern for better matching
 				//$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'source' ] );
-				$regex_pattern = $this->cleanupPattern( $release_name_cleaned, $regex_pattern, [ 'device' ] );
+				$regex_pattern = $this->cleanupPattern( $release_name_cleaned, $regex_pattern, [ 'device', 'os' ] );
 
 				// Match title
 				\preg_match( $regex_pattern, $release_name_cleaned, $matches );
@@ -1566,24 +1567,20 @@ class ReleaseParser extends ReleasePatterns
 				{
 					foreach ( $attributes as $attribute )
 					{
-						if ( \is_array( $attribute ) )
-						{
-							foreach ( $attribute as $value )
-							{
-								// Exception for OS
-								if ( $information === 'os' )
-									$value = '(?:for[._-])?' . $value;
-
-								$release_name = \preg_replace( '/[._\(-]' . $value . '[._\)-]/i', '..', $release_name );
-							}
-						}
-						else
+						// Transform all values to array
+						$attribute = !\is_array( $attribute ) ? [ $attribute ] : $attribute;
+						foreach ( $attribute as $value )
 						{
 							// Exception for OS
 							if ( $information === 'os' )
-								$attribute = '(?:for[._-])?' . $attribute;
+								$value = '(?:for[._-])?' . $value;
 
-							$release_name = \preg_replace( '/[._\(-]' . $attribute . '[._\)-]/i', '..', $release_name );
+							// We need to replace all findings with double dots for proper matching later on.
+							$release_name = \preg_replace( '/[._(-]' . $value . '[._)-]/i', '..', $release_name );
+
+							// Replace format at the end if no group name
+							if ( $information === 'format' )
+								$release_name = \preg_replace( '/[._]' . $value . '$/i', '..', $release_name );		
 						}
 					}
 				}
@@ -1745,28 +1742,12 @@ class ReleaseParser extends ReleasePatterns
 
 					foreach ( $attributes as $attribute )
 					{
-						if ( \is_array( $attribute ) )
+						$attribute = !\is_array( $attribute ) ? [ $attribute ] : $attribute;
+						foreach ( $attribute as $value )
 						{
-							foreach ( $attribute as $value )
-							{
-								$value = $information === 'os' ? '(?:for[._-])?' . $value : $value;
-
-								// And check what exactly pattern matches the given release name.
-								\preg_match( '/[._\(-]' . $value . '[._\)-]/i', $release_name, $matches );
-								// We have a match? ...
-								if ( !empty( $matches ) )
-								{
-									// Put to values and separate by | if needed.
-									$values = !empty( $values ) ? $values . '|' . $value : $value;
-								}
-							}
-						}
-						else
-						{
-							$attribute = $information === 'os' ? '(?:for[._-])?' . $attribute : $attribute;
-
+							$value = $information === 'os' ? '(?:for[._-])?' . $value : $value;
 							// Put to values and separate by | if needed.
-							$values = !empty( $values ) ? $values . '|' . $attribute : $attribute;
+							$values = !empty( $values ) ? $values . '|' . $value : $value;
 						}
 					}
 
