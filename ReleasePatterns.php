@@ -6,7 +6,7 @@ namespace ReleaseParser;
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.2.1
+ * @version 1.2.2
  */
 
 class ReleasePatterns {
@@ -67,8 +67,6 @@ class ReleasePatterns {
 	// Extract software version
 	const REGEX_VERSION_TEXT = '(?:v(?:ersione?)?|Updated?[._-]?v?|Build)';
 	const REGEX_VERSION = self::REGEX_VERSION_TEXT . '[._-]?([\d.]+[a-z\d]{0,3}(?![._-]gage))';
-	// Football, Cricket, Racing, Hockey, Basketball etc
-	const REGEX_SPORTS = '/^(NFL|NBA.(?:East|West|Finals)|WNBA.\d{4}|NHL|ML[BS]|Formula.?[1234E]|F[123]|Superleague.Formula|Nascar.(?:cup|truck|xfinity)|Indycar|Moto.?(GP|[123])|Supercars.championship|W.series.\d{4}|Premier.?League|La.?Liga|Eredivisie|Bundesliga|Ligue.?1|Seria.?A|FA.Cup|EPL|EFL.(?:\d{1,4}|cup|championship)|NRL|(?:Super|international).rugby|CSL|IPL|BBL|T20|LPL.PRO|Eurocup|World.cup|fifa.(?:world.cup|women|fotbolls|wm|U\d+)|(?:international.)?football.(?:australia|womens|sydney|friendly|ligue1|serie.a|uefa|conference|league)|(?:womens.)?UEFA|UEL|concacaf|conmebol|caf|afc.asian|a-league|Grand.Sumo|Cycling.(?:volta|giro|tour|strade|paris|criterium|liege|fleche|amstel|la.vuelta)|giro.d.italia|la.vuelta.(?:a.espana.)?\d{4}|tour.de.france.(?:femmes.)?\d{4}.stage.?\d+|UCI|boxing.\d{4}.\d{2}.\d{2}|wimbledon.(?:tennis.)?\d{4}|wwe.(?:nxt|friday|this|main|monday|wrestlemania))[._-]/i';
 
 
 	// Type patterns.
@@ -269,6 +267,7 @@ class ReleasePatterns {
 		'720p' => '720p',
 		'1080i' => '1080i',
 		'1080p' => '1080p',
+		'1920p' => '1920p',
 		'2160p' => '2160p',
 		'2700p' => '2700p',
 		'2880p' => '2880p',
@@ -396,7 +395,7 @@ class ReleasePatterns {
 		'dk' => [ 'Danish', 'DK' ],
 		'el' => [ 'Greek', 'GR' ],
 		'en' => [ 'English', 'VOA', 'USA?', 'AUS', 'UK', 'GBR', 'ENG' ],
-		'es' => [ 'Spanish', 'Espanol', 'ES', 'SPA', 'Latin[._-]Spanish' ],
+		'es' => [ 'Spanish', 'Espanol', 'ES', 'SPA', 'Latin.Spanish' ],
 		'et' => [ 'Estonian', 'EE' ],
 		'fa' => [ 'Persian', 'Iranian', 'IR' ],
 		'fi' => [ 'Finnish', 'FIN?' ],
@@ -422,8 +421,8 @@ class ReleasePatterns {
 		'no' => [ 'Norwegian', 'NOR?(?![._-]?\d+)' ],
 		'ps' => 'Pashto',
 		'pl' => [ 'Polish', 'PO?L' ],
-		'pt' => [ 'Portuguese', 'PT' ],
-		'pt-BR' => [ 'Brazilian', 'BR' ],
+		'pt' => [ '(?<!brazilian.)Portuguese', 'PT' ],
+		'pt-BR' => [ 'Brazilian(?:.portuguese)?', 'BR' ],
 		'ro' => 'Romanian',
 		'ru' => [ 'Russian', 'RU' ],
 		'sk' => [ 'Slovak', 'SK', 'SLO', 'Slovenian' ],
@@ -437,7 +436,7 @@ class ReleasePatterns {
 		'vi' => 'Vietnamese',
 		'zh' => [ 'Chinese', 'CH[ST]' ],
 		// Misc
-		'multi' => [ 'Multilingual', 'Multi[._-]?(?:languages?|lang|\d*)?', 'EURO?P?A?E?', '(?<!WEB[._-])[MD]L', 'DUAL(?![._-]Audio)' ],
+		'multi' => [ 'Multilingual', 'Multi.?(?:languages?|lang|\d*)?', 'EURO?P?A?E?', '(?<!WEB.)[MD]L', 'DUAL(?!.Audio)' ],
 		'nordic' => [ 'Nordic', 'SCANDiNAViAN' ]
 
 	];
@@ -446,44 +445,44 @@ class ReleasePatterns {
 	const FLAGS = [
 		'3D' => '3D',
 		'ABook' => 'A(?:UDiO)?BOOK',
-		'Abridged' => [ 'ABRIDGED', 'gekuerzte?(?:[._-](?:fassung|lesung))' ], // Audiobook
+		'Abridged' => [ 'ABRIDGED', 'gekuerzte?(?:.(?:fassung|lesung))' ], // Audiobook
 		'Addon' => 'ADDON', // software
 		'Anime' => 'ANiME',
 		'ARM' => 'ARM', // software
-		'Audiopack' => 'Audio[._-]?pack', // Only audio releases for movies
+		'Audiopack' => 'Audio.?pack', // Only audio releases for movies
 		'Beta' => 'BETA', // software
 		'Bookware' => 'BOOKWARE', // software
 		'Boxset' => 'BOXSET',
-		'Chapterfix' => 'CHAPTER[._-]?FIX', // Disc
+		'Chapterfix' => 'CHAPTER.?FIX', // Disc
 		'Cheats' => 'Cheats', // games
 		'Chrono' => 'CHRONO',
 		'Colorized' => 'COLORIZED',
 		'Comic' => 'COMIC',
 		'Complete' => 'Complete',
 		'Convert' => 'CONVERT',
-		'Cover' => '(?:CUSTOM[._-]?|[a-z]+)?COVERS?',
+		'Cover' => '(?:(?:CUST?OM|%language%|%format%|%source%|%resolution%|scans?|disc|ps[\dp]*|xbox\d*|gamecube|gc|unrated|\d*DVD\w+|hig?h?.?res|int|front|retail|\d+dpi|r\d+|original)[._-]?)?COVERS?',
 		'CPOP' => 'CPOP', // Chinese-pop
-		'Chapterfix' => 'CHAPTER[._-]?FIX', // Disc
-		'Incl. Crack' => [ 'CRACK[._-]ONLY', '(?:incl|working)[._-](?:[a-zA-Z]+[._-])?crack' ], // software
-		'Chapterfix' => 'CHAPTER[._-]?FIX', // Disc
+		'Chapterfix' => 'CHAPTER.?FIX', // Disc
+		'Incl. Crack' => [ 'CRACK.?ONLY', '(?:incl|working)[._-](?:[a-zA-Z]+[._-])?crack' ], // software
+		'Chapterfix' => 'CHAPTER.?FIX', // Disc
 		'Cracked' => 'CRACKED', // software
-		'Crackfix' => 'CRACK[._-]?FIX', // software
+		'Crackfix' => 'CRACK.?FIX', // software
 		'Criterion' => 'CRITERION', // special movie rls
 		'Digipack' => 'DIGIPAC?K?', // music
-		'Directors Cut' => 'Directors?[._-]?cut',
-		'DIRFiX' => 'DIR[._-]?FIX',
-		'DIZFiX' => 'DIZ[._-]?FIX',
-		'DLC' => '(?:incl[._-])?DLCS?(?![._-]?(?:Unlocker|Pack))?', // games
-		'DOC' => 'D[O0][CX]',
-		'Doku' => 'DO[CK]U',
+		'Directors Cut' => 'Directors?.?cut',
+		'DIRFiX' => 'DIR.?FIX',
+		'DIZFiX' => 'DIZ.?FIX',
+		'DLC' => '(?:incl.)?DLCS?(?!.?(?:Unlocker|Pack))?', // games
+		'DOX' => 'D[O0]X',
+		'Docu' => 'DO[CK]U?',
 		'Dolby Vision' => [ 'DV', 'DoVi' ],
-		'Dubbed' => [ '(?<!line[._-]|line|mic[._-]|mic|micro[._-]|tv[._-])Dubbed', 'E[._-]?Dubbed', '(?!over|thunder)[a-z]+dub' ],
+		'Dubbed' => [ '(?<!line.|line|mic.|mic|micro.|tv.)Dubbed', 'E.?Dubbed', '(?!over|thunder)[a-z]+dub' ],
 		'eBook' => 'EBOOK',
-		'Extended' => 'EXTENDED(?:[._-]CUT|[._-]Edition)?(?![._-]MIX)',
-		'Final' => 'FINAL[._-]?(%language%)',
-		'FiX' => '(?<!hot[._-]|sample[._-]|nfo[._-]|rar[._-]|dir[._-]|crack[._-]|sound[._-]|track[._-]|diz[._-]|menu[._-])FiX(?:[._-]?only)?',
-		'Font' => '(Commercial[._-])?FONTS?',
-		'Fontset' => '(Commercial[._-])?FONT[._-]?SET',
+		'Extended' => 'EXTENDED(?:.CUT|.Edition)?(?!.MIX)',
+		'Final' => 'FINAL[._-]?(%language%|%flags%)?',
+		'FiX' => '(?<!hot.|sample.|nfo.|rar.|dir.|crack.|sound.|track.|diz.|menu.)FiX(?:.?only)?',
+		'Font' => '(Commercial.)?FONTS?',
+		'Fontset' => '(Commercial.)?FONT.?SET',
 		'Fullscreen' => 'FS', // Fullscreen
 		'FSK' => 'FSK', // German rating system
 		'Hardcoded Subtitles' => 'HC', // (P2P)
@@ -492,26 +491,26 @@ class ReleasePatterns {
 		'HDR10' => 'HDR10(?:hevc)?',
 		'HDR10+' => 'HDR10(Plus|\+)',
 		'HLG' => 'HLG', // Hybrid log-gamma (like HDR)
-		'HOTFiX' => 'HOT[._-]?FIX',
+		'HOTFiX' => 'HOT.?FIX',
 		'HOU' => 'HOU',
 		'HSBS' => 'HS(?:BS)?',
 		'Hybrid' => 'HYBRID',
-		'Imageset' => '(?:Full[._-]?)?(?:IMA?GE?|photo|foto)[._-]?SETS?',
+		'Imageset' => '(?:Full[._-]?)?(?:IMA?GE?|photo|foto).?SETS?',
 		'IMAX' => 'IMAX',
 		'Internal' => 'iNT(ERNAL)?',
 		'IVTC' => 'IVTC', // Inverce telecine
 		'JAV' => 'JAV', // Japanese Adult Video
-		'KEY' => 'GENERIC[._-]?KEY',
-		'KEYGEN' => [ '(?:Incl[._-])?KEY(?:GEN(?:ERATOR)?|MAKER)(?:[._-]only)?', 'KEYFILE[._-]?MAKER' ],
+		'KEY' => 'GENERIC.?KEY',
+		'KEYGEN' => [ '(?:Incl.)?KEY(?:GEN(?:ERATOR)?|MAKER)(?:.only)?', 'KEYFILE.?MAKER' ],
 		'Intel' => 'INTEL',
-		'Line dubbed' => [ 'ld', 'line[._-]?dubbed' ],
+		'Line dubbed' => [ 'ld', 'line.?dubbed' ],
 		'Limited' => 'LIMITED',
 		'Magazine' => 'MAG(AZINE)?',
-		'Menufix' => 'MENU[._-]?FIX',
-		'Micro dubbed' => [ '(?:ac3)?md', 'mic(ro)?[._-]?dubbed' ],
+		'Menufix' => 'MENU.?FIX',
+		'Micro dubbed' => [ '(?:ac3)?md', 'mic(ro)?.?dubbed' ],
 		'MIPS' => 'MIPS', // software (MIPS CPU)
 		'New' => 'New[._-](%format%|%language%|%source%|%resolution%)',
-		'NFOFiX' => 'NFO[._-]?FiX',
+		'NFOFiX' => 'NFO.?FiX',
 		'OAR' => 'OAR', // Original Aspect Ratio
 		'OVA' => 'O[AV]+', // Original Video Anime/Original Anime Video
 		'OAD' => 'OAD', // Original Anime DVD
@@ -519,43 +518,45 @@ class ReleasePatterns {
 		'OEM' => 'OEM',
 		'OST' => 'OST', // music
 		//'PACK' => 'PACK',
-		'Incl. Patch' => [ '(?:incl[._-])?(?:[a-z]+[._-])?patch(?:ed)?(?:[._-]only)', 'no[a-zA-Z]+[._-]patch(?:ed)?(?:[._-]only)' ], // software
+		'Incl. Patch' => [ '(?:incl.)?(?:[a-z]+[._-])?patch(?:ed)?(?:[._-]only)', 'no[a-zA-Z]+[._-]patch(?:ed)?(?:[._-]only)' ], // software
 		'Paysite' => 'PAYSITE', // xxx
 		'Portable' => 'Portable', // Software
 		'Preair' => 'PREAIR',
 		'Proper' => '(?:REAL)?PROPER',
 		'Promo' => 'PROMO',
-		'Prooffix' => 'PROOF[._-]?FIX',
+		'Prooffix' => 'PROOF.?FIX',
 		'Rated' => 'RATED',
 		'RARFix' => 'RARFIX',
-		'READNFO' => 'READ[._-]?NFO',
+		'READNFO' => 'READ.?NFO',
 		'Refill' => 'Refill',
 		'Reissue' => 'REISSUE',	// music
 		'Regged' => 'REGGED', // software
 		'Regraded' => 'regraded', // Movie (p2p)
 		'Remastered' => 'REMASTERED',
 		'Remux' => 'REMUX',
-		'Repack' => '(working[._-])?REPACK',
-		'RERiP' => 're[._-]?rip',
+		'Repack' => '(working.)?REPACK',
+		'RERiP' => 're.?rip',
 		'Restored' => 'RESTORED',
 		'Retail' => 'RETAIL',
-		'Samplefix' => 'SAMPLE[._-]?FIX',
+		'Samplefix' => 'SAMPLE.?FIX',
 		'SDR' => 'SDR',
-		'Serial' => 'SERIAL(?![._-]Killer)?', // Software
-		'SFVFix' => 'SFV[._-]?FIX',
+		'Serial' => 'SERIAL(?!.Killer)?', // Software
+		'SFVFix' => 'SFV.?FIX',
 		'SH3' => 'SH3', // software (SH3 CPU)
 		'Soundfix' => 'SOUNDFIX',
 		'Special Edition' => 'SE(?![._-]\d*)',
 		'STV' => 'STV',
-		'Subbed' => [ '[a-zA-Z]*SUB(?:BED|S)?', 'SUB[._-]?\w+' ],
-		'Subfix' => 'SUB[._-]?FIX',
+		'Subbed' => [ '[a-zA-Z]*SUB(?:BED|s)?', 'SUB(?!pack)[._-]?\w+' ],
+		'Subfix' => 'SUB.?FIX',
+		'Subpack' => 'sub.?pack',
 		'Superbit' => 'Superbit',	// https://de.wikipedia.org/wiki/Superbit
-		'Syncfix' => 'SYNC[._-]?FIX', // Video AUdio
+		'Syncfix' => 'SYNC.?FIX', // Video AUdio
 		'Theatrical' => 'THEATRICAL',
-		'Trackfix' => 'TRACK[._-]?FiX', // Music
+		'Trackfix' => 'TRACK.?FiX', // Music
 		'Trailer' => 'TRAILER',
+		'TRAiNER' => 'Trainer(?!.XXX)(?:.(?:%flags%))?',
 		'Tutorial' => 'TUTORIAL',
-		'TV Dubbed' => 'tv[._-]?dubbed',
+		'TV Dubbed' => 'tv.?dubbed',
 		'UHD' => 'UHD',
 		'Upscaled UHD' => 'UpsUHD',
 		'Unabridged' => [ 'UNABRIDGED', 'Ungekuerzt' ], // Audiobook
@@ -565,7 +566,7 @@ class ReleasePatterns {
 		'Unrated' => 'UNRATED',
 		'Untouched' => 'UNTOUCHED',
 		'USK' => 'USK', // German rating system
-		'Update' => '(WITH[._-])?UPDATE',
+		'Update' => '(WITH.)?UPDATE',
 		'V1' => 'V1[._-](%format%|%language%|%source%|%resolution%)',
 		'V2' => 'V2[._-](%format%|%language%|%source%|%resolution%)',
 		'V3' => 'V3[._-](%format%|%language%|%source%|%resolution%)',
@@ -596,12 +597,86 @@ class ReleasePatterns {
 		12 => 'D[ei][cz]i?emb[er][er]|Dec'
 	];
 
+	// All different Sports
+	const SPORTS = [
+		// Football
+		'a-league',			// Australia
+		'Premier.?League',	// England
+		'La.?Liga',			// Spain
+		'Bundesliga',		// Germany
+		'Eredivisie',		// Netherlands
+		'Ligue.?1',			// France
+		'Seria.?A',			// Italy
+		'FA.Cup',			// England
+		'EPL',				// England
+		'EFL.(?:\d{1,4}|cup|championship)', // England
+		'MLS',				// USA
+		'CSL',				// China
+		'fifa.(?:world.cup|women|fotbolls|wm|U\d+)', // International
+		'(?:international.)?football.(?:australia|womens|sydney|friendly|ligue1|serie.a|uefa|conference|league)', // International
+		'(?:womens.)?UEFA',	// European
+		'UEL',				// UEFA Europa league
+		'concacaf',			// North and Middle America
+		'conmebol',			// South America
+		'caf',				// African
+		'afc.asian',		// Asian
+		// Racing
+		'Formul[ae].?[1234E]',
+		'F[123]',
+		'Superleague.Formula',	
+		'Nascar.(?:cup|truck|xfinity)',
+		'Indycar',
+		'Porsche.(Carrera|sprint)',
+		'DTM.(\d{2,4}|spa|lauszitzring|gp\d+|\d+.lauf)',
+		'wrc.(?:fia|\d{4})', // Rallye
+		'Supercars.championship',
+		'W.series.\d{4}',
+		'Moto.?(GP|[123])',
+		// Cycling
+		'Cycling.(?:volta|giro|tour|strade|paris|criterium|liege|fleche|amstel|la.vuelta)', // International
+		'giro.d.italia', // Italy
+		'la.vuelta.(?:a.espana.)?\d{4}', // Spain
+		'tour.de.france.(?:femmes.)?\d{4}.stage.?\d+', // France
+		'UCI',	// International
+		// Rugby
+		'(?:Super|international).rugby',
+		'IPL',	// India
+		'NRL',	// Australasian
+		// Basketball
+		'NBA.(?:East|West|Finals)',
+		'WNBA.\d{4}',
+		'Eurocup',
+		// Cricket
+		'T20',
+		'BBL',	// Australia
+		// American Football
+		'NFL',
+		// Wrestle
+		'wwe.(?:nxt|friday|this|main|monday|wrestlemania)',
+		'aew.(?:collision|dynamite|dark)',
+		// Hockey
+		'NHL',
+		// Baseball
+		'MLB',
+		// Boxing
+		'boxing.\d{4}.\d{2}.\d{2}',
+		// Sumo
+		'Grand.Sumo',
+		// Tennis
+		'wimbledon.(?:tennis.)?\d{4}',
+		// eSports
+		'LPL.PRO',
+		// World cup of whatever
+		'World.cup'
+	];
+
 	// Put together some flag/format arrays for better type parsing.
 	// Flags
 	const FLAGS_MOVIE = [ 'Dubbed', 'AC3 Dubbed' , 'HDR', 'HDR10', 'HDR10+', 'IMAX', 'Line dubbed', 'Micro dubbed', 'THEATRICAL', 'UNCUT', 'Remux', 'Subbed', 'Directors Cut' ];
 	const FLAGS_EBOOK = [ 'eBook', 'Magazine', 'Comic', 'ePUB' ];
 	const FLAGS_MUSIC = [ 'OST' ];
 	const FLAGS_APPS = [ 'Cracked', 'Regged', 'KEYGEN', 'Incl. Patch', 'Crackfix', 'ISO', 'ARM', 'Intel', 'x86', 'x64', 'Portable' ];
+	const FLAGS_GAMES = [ 'DLC', 'TRAiNER' ];
 	const FLAGS_ANIME = [ 'Anime', 'OVA', 'ONA', 'OAD' ];
 	const FLAGS_XXX = [ 'XXX', 'JAV', 'Imageset' ];
 	// Formats

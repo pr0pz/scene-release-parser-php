@@ -10,7 +10,7 @@ require_once __DIR__ . '/ReleaseParser.php';
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.2.1
+ * @version 1.2.2
  */
 
 /**
@@ -177,7 +177,7 @@ function release_parser_test()
 		// TV #5 - No episode title given
 		[
 			new ReleaseParser( 'Dark.Net.S01E06.DOC.SUBFRENCH.720p.WEBRip.x264-TiMELiNE', 'tv' ),
-			'Title: Dark Net / Group: TiMELiNE / Season: 1 / Episode: 6 / Flags: DOC, Subbed / Source: WEB / Format: x264 / Resolution: 720p / Type: TV'
+			'Title: Dark Net / Group: TiMELiNE / Season: 1 / Episode: 6 / Flags: Docu, Subbed / Source: WEB / Format: x264 / Resolution: 720p / Type: TV'
 		],
 		// TV #6 - Old season + episode pattern: 2x14
 		[
@@ -192,7 +192,7 @@ function release_parser_test()
 		// TV #8 - Episode is 0 (needs dirfix but works)
 		[
 			new ReleaseParser( '72.Cutest.Animals.S01E0.German.DL.Doku.1080p.WEB.x264-BiGiNT', 'tv' ),
-			'Title: 72 Cutest Animals / Group: BiGiNT / Season: 1 / Episode: 0 / Flags: Doku / Source: WEB / Format: x264 / Resolution: 1080p / Language: German, Multilingual / Type: TV'
+			'Title: 72 Cutest Animals / Group: BiGiNT / Season: 1 / Episode: 0 / Flags: Docu / Source: WEB / Format: x264 / Resolution: 1080p / Language: German, Multilingual / Type: TV'
 		],
 		// TV #9 - P2P with multi Audio and no extra title
 		[
@@ -223,6 +223,11 @@ function release_parser_test()
 		[
 			new ReleaseParser( '4x4.Ule.ja.Umber.Autoga.Colombias.S01E09.EE.1080p.WEB.h264-EMX', 'PRE' ),
 			'Title: 4x4 Ule ja Umber Autoga Colombias / Group: EMX / Season: 1 / Episode: 9 / Source: WEB / Format: h264 / Resolution: 1080p / Language: Estonian / Type: TV'
+		],
+		// TV #15 - Docu with episode
+		[
+			new ReleaseParser( 'Speer.Et.Hitler.L.Architecte.Du.Diable.E03.FINAL.DOC.FRENCH.PDTV.XViD-BAWLS', 'tv-xvid' ),
+			'Title: Speer Et Hitler L Architecte Du Diable / Group: BAWLS / Episode: 3 / Flags: Docu, Final / Source: PDTV / Format: XViD / Language: French / Type: TV'
 		],
 	
 		// TV Sports
@@ -476,14 +481,14 @@ function release_parser_test()
 function release_parser_test_single()
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
-	$release_name = 'Broforce.Forever.MacOS-I_KnoW';
-	$release_section = 'pre';
+	$release_name = 'Doom.Plus.7.TRAiNER.NFOFIX-DARKSiDERS';
+	$release_section = 'DOX';
 	$release = new ReleaseParser( $release_name, $release_section );
 
 	// Check if expectation matches parsed.
 	echo '[Original] ' . $release_name . \PHP_EOL;
 	echo '  [Parsed] ' . $release . \PHP_EOL;
-	echo '[Expected] Title: Broforce Forever / Group: I_KnoW / Os: macOS / Type: App' . \PHP_EOL . \PHP_EOL;
+	echo '[Expected] Title: Doom Plus 7 / Group: DARKSiDERS / Flags: NFOFiX, TRAiNER / Type: Game' . \PHP_EOL . \PHP_EOL;
 
 	\print_r( $release );
 }
