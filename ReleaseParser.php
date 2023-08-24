@@ -9,7 +9,7 @@ require_once __DIR__ . '/ReleasePatterns.php';
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.2.2
+ * @version 1.2.3
  */
 
 class ReleaseParser extends ReleasePatterns
@@ -229,7 +229,7 @@ class ReleaseParser extends ReleasePatterns
 				// Check for language tag (exclude "grand" for formula1 rls)
 				\preg_match( $regex, $this->release, $matches );
 
-
+				// Maybe regex error
 				if ( preg_last_error() && \str_contains( $regex, '?<!' ) )
 				{
 					echo $regex . PHP_EOL;
@@ -655,7 +655,7 @@ class ReleaseParser extends ReleasePatterns
 				}
 				else
 				{
-					$episode = $this->sanitize( \str_replace( [ '_', '.' ], '-', $episode ) );
+					$episode = $this->sanitize( \str_replace( [ '_', '.', 'a', 'A' ], '-', $episode ) );
 				}
 				$this->set( 'episode', $episode );
 			}
@@ -680,10 +680,9 @@ class ReleaseParser extends ReleasePatterns
 	private function isSports()
 	{
 		foreach( self::SPORTS as $sport )
-		{
 			if ( \preg_match( '/^' . $sport . '[._-]/i', $this->release ) )
 				return \true;
-		}
+
 		return \false;
 	}
 
@@ -715,27 +714,35 @@ class ReleaseParser extends ReleasePatterns
 	{
 		$type = '';
 
-		// Ebook = ebook related flag
-		if ( $this->hasAttribute( self::FLAGS_EBOOK, 'flags' ) )
+		// Match sports events
+		if ( $this->isSports() )
 		{
-			$type = 'eBook';
+			$type = 'Sports';
 		}
 		// Abook = Abook related flag
 		else if( $this->hasAttribute( 'ABOOK', 'flags' ) )
 		{
 			$type = 'ABook';
 		}
+		// Music related sources
+		else if (
+			$this->hasAttribute( self::SOURCES_MUSIC, 'source' ) ||
+			$this->hasAttribute( self::FLAGS_MUSIC, 'flags' )
+		)
+		{
+			$type = 'Music';
+		}
+		// Ebook = ebook related flag
+		else if ( $this->hasAttribute( self::FLAGS_EBOOK, 'flags' ) )
+		{
+			$type = 'eBook';
+		}
 		// Anime related flags
 		else if ( $this->hasAttribute( self::FLAGS_ANIME, 'flags' ) )
 		{
 			$type = 'Anime';
 		}
-		// Match sports events
-		else if ( $this->isSports() )
-		{
-			$type = 'Sports';
-		}
-		// Could be an xxx movie
+		// XXX
 		else if ( $this->hasAttribute( self::FLAGS_XXX, 'flags' ) )
 		{
 			$type = 'XXX';
@@ -785,10 +792,11 @@ class ReleaseParser extends ReleasePatterns
 		{
 			$type = 'Movie';
 		}
-		// Music = if we found some music related flags
+		// Music if music format and no version
 		else if (
-			$this->hasAttribute( self::FLAGS_MUSIC, 'flags' ) ||
-			$this->hasAttribute( self::FORMATS_MUSIC, 'format' ) )
+			$this->hasAttribute( self::FORMATS_MUSIC, 'format' ) &&
+			$this->get( 'version' ) === \null
+		)
 		{
 			$type = 'Music';
 		}
@@ -1032,7 +1040,20 @@ class ReleaseParser extends ReleasePatterns
 					// Match episode title
 					\preg_match( $regex_pattern, $release_name_cleaned, $matches );
 
-					$title_extra = !empty( $matches[1] ) ? $matches[1] : '';
+					$title_extra = !empty( $matches[1] ) && $matches[1] !== '.' ? $matches[1] : '';
+
+					// If multiple episodes (1-2) episodes get wrongfully parse as title, so remove it
+					// The regex is 'too' ungreedy.
+					if ( \is_numeric( $title_extra ) )
+					{
+						if (
+							\strlen( $title_extra ) <= 2 &&
+							\str_contains( $this->get( 'episode' ), (int) $title_extra )
+						)
+						{
+							$title_extra = '';
+						}
+					}
 
 					break;
 				}
@@ -1054,7 +1075,7 @@ class ReleaseParser extends ReleasePatterns
 						// 1st match = event (nfl, mlb, etc.)
 						$title = $matches[1];
 						// 2nd match = specific event name (eg. team1 vs team2)
-						$title_extra = !empty( $matches[2] ) ? $matches[2] : '';
+						$title_extra = !empty( $matches[2] ) && $matches[2] !== '.' ? $matches[2] : '';
 
 						break;
 					}
@@ -1796,6 +1817,20 @@ class ReleaseParser extends ReleasePatterns
 				if ( ( $key = array_search( 'Hybrid', $flags ) ) !== \false ) unset( $flags[ $key ] );
 				$this->set( 'flags', $flags );
 			}
+		}
+		else if ( $type === 'music' )
+		{
+			// Remove episode and season from music release, falsely parsed
+			if ( !empty( $this->get( 'episode' ) ) ) $this->set( 'episode', \null );
+			if ( !empty( $this->get( 'season' ) ) ) $this->set( 'season', \null );
+		}
+
+		if ( $type !== 'app' && $type !== 'game' && $this->hasAttribute( 'TRAiNER', 'flags' ) )
+		{
+			// Remove Trainer if not app or game
+			$flags = $this->get( 'flags' );
+			if ( ( $key = array_search( 'TRAiNER', $flags ) ) !== \false ) unset( $flags[ $key ] );
+			$this->set( 'flags', $flags );
 		}
 	}
 

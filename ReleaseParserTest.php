@@ -10,7 +10,7 @@ require_once __DIR__ . '/ReleaseParser.php';
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.2.2
+ * @version 1.2.3
  */
 
 /**
@@ -105,7 +105,7 @@ function release_parser_test()
 		// Movies #2
 		[
 			new ReleaseParser( 'Sweet.Home.Alabama.SCREENER.Line.Dubbed.German.VCD-TGSC', 'Screener' ),
-			'Title: Sweet Home Alabama / Group: TGSC / Flags: Line dubbed / Source: DVD Screener / Format: VCD / Language: German / Type: Movie'
+			'Title: Sweet Home Alabama / Group: TGSC / Flags: Line dubbed / Source: Screener / Format: VCD / Language: German / Type: Movie'
 		],
 		// Movies #3
 		[
@@ -157,7 +157,7 @@ function release_parser_test()
 		// TV #1 - Multiple episodes: 01-02
 		[
 			new ReleaseParser( 'Full.Metal.Panic.Eps.01-02.INTERNAL.SVCD.DVDrip.DUBBED.DIRFIX-USAnime', 'SVCD' ),
-			'Show: Full Metal Panic / Title: 02 / Group: USAnime / Episode: 01-02 / Flags: DIRFiX, Dubbed, Internal / Source: DVDRip / Format: SVCD / Type: TV'
+			'Title: Full Metal Panic / Group: USAnime / Episode: 01-02 / Flags: DIRFiX, Dubbed, Internal / Source: DVDRip / Format: SVCD / Type: TV'
 		],
 		// TV #2 - Special season + episode pattern: S2.E07
 		[
@@ -229,7 +229,12 @@ function release_parser_test()
 			new ReleaseParser( 'Speer.Et.Hitler.L.Architecte.Du.Diable.E03.FINAL.DOC.FRENCH.PDTV.XViD-BAWLS', 'tv-xvid' ),
 			'Title: Speer Et Hitler L Architecte Du Diable / Group: BAWLS / Episode: 3 / Flags: Docu, Final / Source: PDTV / Format: XViD / Language: French / Type: TV'
 		],
-	
+		// TV #16 - French season and flags
+		[
+			new ReleaseParser( 'Friends.Saison5.Episode5-8.vo.subtitlefrench.DVDRIP.DivX-RoToTo', 'NDS' ),
+			'Title: Friends / Group: RoToTo / Season: 5 / Episode: 5-8 / Flags: Subbed / Source: DVDRip / Format: DiVX / Type: TV'
+		],
+
 		// TV Sports
 		// TV Sports #1
 		[
@@ -481,14 +486,13 @@ function release_parser_test()
 function release_parser_test_single()
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
-	$release_name = 'Doom.Plus.7.TRAiNER.NFOFIX-DARKSiDERS';
-	$release_section = 'DOX';
+	$release_name = 'Jack_Dangers--Sounds_of_the_20th_Century_No2-VLS-2001-DPS';
+	$release_section = 'NDS';
 	$release = new ReleaseParser( $release_name, $release_section );
 
 	// Check if expectation matches parsed.
 	echo '[Original] ' . $release_name . \PHP_EOL;
 	echo '  [Parsed] ' . $release . \PHP_EOL;
-	echo '[Expected] Title: Doom Plus 7 / Group: DARKSiDERS / Flags: NFOFiX, TRAiNER / Type: Game' . \PHP_EOL . \PHP_EOL;
 
 	\print_r( $release );
 }
