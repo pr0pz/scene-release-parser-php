@@ -9,7 +9,7 @@ require_once __DIR__ . '/ReleasePatterns.php';
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.2.3
+ * @version 1.2.4
  */
 
 class ReleaseParser extends ReleasePatterns
@@ -1119,25 +1119,63 @@ class ReleaseParser extends ReleasePatterns
 
 			// XXX
 			case 'xxx':
+				$matches = [];
 
-				// Setup regex pattern
-				$regex_pattern = !empty( $this->get( 'date' ) ) ? self::REGEX_TITLE_XXX_DATE : self::REGEX_TITLE_XXX;
-				$regex_used = !empty( $this->get( 'date' ) ) ? 'REGEX_TITLE_XXX_DATE' : 'REGEX_TITLE_XXX';
-
-				// Search and replace pattern in regex pattern for better matching
-				$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'year', 'language', 'source', 'regex_date', 'regex_date_monthname' ] );
-
-				// Match title
-				\preg_match( $regex_pattern, $release_name_cleaned, $matches );
-
-				if ( !empty( $matches ) )
+				// Some XXX releases with episode
+				if ( !empty( $this->get( 'episode' ) ) )
 				{
-					// 1st Match = Publisher, Website, etc.
-					$title = $matches[1];
-					// 2nd Match = Specific release name (movie/episode/model name, etc.)
-					$title_extra = !empty( $matches[2] ) ? $matches[2] : '';
+					// Check for episode
+					$regex_pattern = self::REGEX_TITLE_TV;
+					$regex_used = 'REGEX_TITLE_TV';
 
-					break;
+					// Match title
+					\preg_match( $regex_pattern, $release_name_cleaned, $matches );
+					
+					// Check for matches with regex title tv
+					if ( !empty( $matches ) )
+					{
+						$title = $matches[1];
+
+						// Build pattern and try to get episode title
+						// So search and replace needed data to match properly.
+						$regex_pattern = self::REGEX_TITLE_TV_EPISODE;
+						$regex_used .= ' + REGEX_TITLE_TV_EPISODE';
+
+						// Search and replace pattern in regex pattern for better matching
+						//$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] );
+						$release_name_cleaned = $this->cleanup( $release_name_cleaned, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] );
+
+						// Match episode title
+						\preg_match( $regex_pattern, $release_name_cleaned, $matches );
+
+						$title_extra = !empty( $matches[1] ) && $matches[1] !== '.' ? $matches[1] : '';
+
+						break;
+					}
+				}
+
+				// Default pattern
+				if ( empty( $title ) )
+				{
+					// Setup regex pattern
+					$regex_pattern = !empty( $this->get( 'date' ) ) ? self::REGEX_TITLE_XXX_DATE : self::REGEX_TITLE_XXX;
+					$regex_used = !empty( $this->get( 'date' ) ) ? 'REGEX_TITLE_XXX_DATE' : 'REGEX_TITLE_XXX';
+
+					// Search and replace pattern in regex pattern for better matching
+					$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'year', 'language', 'source', 'regex_date', 'regex_date_monthname' ] );
+
+					// Match title
+					\preg_match( $regex_pattern, $release_name_cleaned, $matches );
+
+					if ( !empty( $matches ) )
+					{
+						// 1st Match = Publisher, Website, etc.
+						$title = $matches[1];
+						// 2nd Match = Specific release name (movie/episode/model name, etc.)
+						$title_extra = !empty( $matches[2] ) ? $matches[2] : '';
+
+						break;
+					}
 				}
 
 				// Jump to default if no title found
@@ -1340,7 +1378,9 @@ class ReleaseParser extends ReleasePatterns
 						$attr_key === 'V2' ||
 						$attr_key === 'V3' ||
 						$attr_key === 'Cover' ||
-						$attr_key === 'Docu'
+						$attr_key === 'Docu' ||
+						$attr_key === 'HR' ||
+						$attr_key === 'Vertical'
 					)
 					{
 						$pattern = $this->cleanupPattern( $this->release, $pattern, [ 'flags', 'format', 'source', 'language', 'resolution' ] );

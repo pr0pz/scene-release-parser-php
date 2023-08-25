@@ -10,7 +10,7 @@ require_once __DIR__ . '/ReleaseParser.php';
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.2.3
+ * @version 1.2.4
  */
 
 /**
@@ -438,6 +438,13 @@ function release_parser_test()
 			new ReleaseParser( 'NaughtyAmerica.com_17.10.12.Sloan.Harper.Sean.Lawless.Dirty.Wives.Club.XXX.IMAGESET-FuGLi', 'imgset' ),
 			'Publisher: NaughtyAmerica.com / Title: Sloan Harper Sean Lawless Dirty Wives Club / Group: FuGLi / Year: 2017 / Date: 12.10.2017 / Flags: Imageset, XXX / Type: XXX'
 		],
+		// XXX #2 - XXX with episode and special flags
+		[
+			new ReleaseParser( 'Lustery.E727.Leo.And.Madly.A.Happy.Ending.For.Him.XXX.VERTICAL.HRp.MP4-WRB', 'XXX' ),
+			'Publisher: Lustery / Title: Leo And Madly A Happy Ending For Him / Group: WRB / Episode: 727 / Flags: HR, Vertical, XXX / Format: MP4 / Type: XXX'
+		],
+
+		
 
 		// MusicVideo
 		// MusicVideo #1 - Recorded on a live show with special date (like normal music live recording)
