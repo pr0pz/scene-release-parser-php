@@ -10,7 +10,7 @@ require_once __DIR__ . '/ReleaseParser.php';
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.2.4
+ * @version 1.3.0
  */
 
 /**
@@ -95,6 +95,11 @@ function release_parser_test()
 			new ReleaseParser( 'Broforce.Forever.MacOS-I_KnoW', 'Pre' ),
 			'Title: Broforce Forever / Group: I_KnoW / Os: macOS / Type: App'
 		],
+		// Apps #9 - Symbian App - dont falsely parse episode and season
+		[
+			new ReleaseParser( 'PocketTorch.AquaCalendar.V1.v1.2.N3650.NGAGE.SX1.S60.SymbianOS.READ.NFO.Cracked-aSxPDA', 'NGAGE' ),
+			'Title: PocketTorch AquaCalendar / Group: aSxPDA / Flags: Cracked, READNFO / Device: Nokia N-Gage / Os: Symbian / Version: 1.v1 / Type: App'
+		],
 
 		// Movies (usually a lot of flags for testing)
 		// Movies #1
@@ -151,6 +156,11 @@ function release_parser_test()
 		[
 			new ReleaseParser( 'Intruders.Die.Aliens.Sind.Unter.Uns.1992.Uncut.German.AC3.DVDRiP.XviD', 'x265' ),
 			'Title: Intruders Die Aliens Sind Unter Uns / Group: NOGRP / Year: 1992 / Flags: Uncut / Source: DVDRip / Format: XViD / Audio: AC3 / Language: German / Type: Movie'
+		],
+		// Movies #12 - Flags in title, dont parse episode
+		[
+			new ReleaseParser( 'Der.Herr.Der.Ringe.Die.Gefaehrten.SPECIAL.EXTENDED.EDITION.2001.German.DL.1080p.BluRay.AVC.READ.NFO.PROPER-AVCBD', 'BLURAY-AVC' ),
+			'Title: Der Herr Der Ringe Die Gefaehrten / Group: AVCBD / Year: 2001 / Flags: Extended, Proper, READNFO, Special Edition / Source: Bluray / Format: AVC / Resolution: 1080p / Language: German, Multilingual / Type: Movie'
 		],
 
 		// TV
@@ -263,18 +273,32 @@ function release_parser_test()
 		],
 
 		// Anime
+		// Anime #1
 		[
 			new ReleaseParser( 'Bastard.Episode4.Dubbed.OAV.DVDRip.XviD-DVDiSO', 'XVID' ),
 			'Title: Bastard / Group: DVDiSO / Episode: 4 / Flags: Dubbed, OVA / Source: DVDRip / Format: XViD / Type: Anime'
 		],
+		// Anime #2
 		[
 			new ReleaseParser( 'Kurokos.Basketball.2nd.Season.NG-shuu.Specials.E06.German.Subbed.2014.ANiME.BDRiP.x264-STARS', 'anime' ),
 			'Title: Kurokos Basketball 2nd Season NG-shuu Specials / Group: STARS / Year: 2014 / Episode: 6 / Flags: Anime, Subbed / Source: BDRip / Format: x264 / Language: German / Type: Anime'
 		],
+		// Anime #3
 		[
 			new ReleaseParser( 'Pokemon.23.Der.Film.Geheimnisse.des.Dschungels.German.2020.ANiME.DL.EAC3D.1080p.BluRay.x264-STARS', 'anime' ),
 			'Title: Pokemon 23 Der Film Geheimnisse des Dschungels / Group: STARS / Year: 2020 / Flags: Anime / Source: Bluray / Format: x264 / Resolution: 1080p / Audio: EAC3D / Language: German, Multilingual / Type: Anime'
 		],
+		// Anime #4 - Some rare flags and source
+		[
+			new ReleaseParser( 'Romance.Is.In.The.Flash.Of.The.Sword.II.EP01.FANSUBFRENCH.HENTAi.RAWRiP.XViD-Lolicon', 'subs' ),
+			'Title: Romance Is In The Flash Of The Sword II / Group: Lolicon / Episode: 1 / Flags: Hentai, Subbed / Source: RAWRiP / Format: XViD / Type: Anime'
+		],
+		// Anime #5 - Extra title example
+		[
+			new ReleaseParser( 'Spy.x.Family.E04.Elterngespraech.an.der.Eliteschule.German.2022.ANiME.DL.BDRiP.x264-STARS', 'ANiME' ),
+			'Show: Spy x Family / Title: Elterngespraech an der Eliteschule / Group: STARS / Year: 2022 / Episode: 4 / Flags: Anime / Source: BDRip / Format: x264 / Language: German, Multilingual / Type: Anime'
+		],
+	
 
 		// Music
 		// Music #1
@@ -456,7 +480,12 @@ function release_parser_test()
 		[
 			new ReleaseParser( 'David_Guetta_ft_Nicki_Minaj_and_FloRida-Where_Them_Girls_At_(Americas_Got_Talent_08-31-11)-HDTV-720p-X264-2011-2LC', 'mvid' ),
 			'Artist: David Guetta ft. Nicki Minaj and FloRida / Title: Where Them Girls At (Americas Got Talent 08-31-11) / Group: 2LC / Year: 2011 / Date: 31.08.2011 / Source: HDTV / Format: x264 / Resolution: 720p / Type: MusicVideo'
-		]
+		],
+		// MusicVideo #3 - Not a TV Show, Dont parse DAT as source
+		[
+			new ReleaseParser( 'T-Pain_ft_Kehlani-I_Like_Dat_(Jimmy_Kimmel_Live_2021-06-09)-DDC-720p-x264-2021-SRPx', 'tv-hd-x264' ),
+			'Artist: T / Title: Pain ft. Kehlani-I Like Dat (Jimmy Kimmel Live 2021-06-09) / Group: SRPx / Year: 2021 / Date: 09.06.2021 / Source: DDC / Format: x264 / Resolution: 720p / Type: MusicVideo'
+		],
 	];
 
 	$i = 1;
@@ -493,8 +522,8 @@ function release_parser_test()
 function release_parser_test_single()
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
-	$release_name = 'Jack_Dangers--Sounds_of_the_20th_Century_No2-VLS-2001-DPS';
-	$release_section = 'NDS';
+	$release_name = 'Batman_Vengeance_PAL_Rip_XBOX_Read_NFO-XTasy';
+	$release_section = 'XBOX';
 	$release = new ReleaseParser( $release_name, $release_section );
 
 	// Check if expectation matches parsed.
