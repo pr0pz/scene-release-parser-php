@@ -10,7 +10,7 @@ require_once __DIR__ . '/ReleaseParser.php';
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.3.0
+ * @version 1.3.1
  */
 
 /**
@@ -67,39 +67,51 @@ function release_parser_test()
 		],
 		// Apps #3
 		[
-			new ReleaseParser( 'PluralSight.Microsoft.Azure.Network.Engineer-secure.And.Monitor.Networks.Bookware-KNiSO', '0day' ),
-			'Title: PluralSight Microsoft Azure Network Engineer-secure And Monitor Networks / Group: KNiSO / Flags: Bookware / Type: App'
-		],
-		// Apps #4
-		[
 			new ReleaseParser( 'Aviano.Update.v1.03-ANOMALY', '0day' ),
 			'Title: Aviano / Group: ANOMALY / Flags: Update / Version: 1.03 / Type: App'
 		],
-		// Apps #5
+		// Apps #4
 		[
 			new ReleaseParser( 'QUIZWARE.PRACTICE.TESTS.FOR.COMPUTER.ASSOCIATES.CERTIFICATIONS.V4.84-JGT', 'ebook' ),
 			'Title: Quizware Practice Tests For Computer Associates Certifications / Group: JGT / Version: 4.84 / Type: App'
 		],
-		// Apps #6 - Movie Source and Audio in rls name
+		// Apps #5 - Movie Source and Audio in rls name
 		[
 			new ReleaseParser( 'SurCode.DVD.Professional.DTS.Encoder.v1.0.21.Retail-iNTENSiON', 'Apps' ),
 			'Title: SurCode DVD Professional DTS Encoder / Group: iNTENSiON / Flags: Retail / Version: 1.0.21 / Type: App'
 		],
-		// Apps #7 - OS in rls name
+		// Apps #6 - OS in rls name
 		[
 			new ReleaseParser( 'Schweighofer.Win1A.Lohn.v23.10.4.0.German.WinALL.Incl.Keygen-BLiZZARD', 'Apps' ),
 			'Title: Schweighofer Win1A Lohn / Group: BLiZZARD / Flags: KEYGEN / Os: Windows / Version: 23.10.4.0 / Language: German / Type: App'
 		],
-		// Apps #8 - Remove OS from rls name
+		// Apps #7 - Remove OS from rls name
 		[
 			new ReleaseParser( 'Broforce.Forever.MacOS-I_KnoW', 'Pre' ),
 			'Title: Broforce Forever / Group: I_KnoW / Os: macOS / Type: App'
 		],
-		// Apps #9 - Symbian App - dont falsely parse episode and season
+		// Apps #8 - Symbian App - dont falsely parse episode and season
 		[
 			new ReleaseParser( 'PocketTorch.AquaCalendar.V1.v1.2.N3650.NGAGE.SX1.S60.SymbianOS.READ.NFO.Cracked-aSxPDA', 'NGAGE' ),
 			'Title: PocketTorch AquaCalendar / Group: aSxPDA / Flags: Cracked, READNFO / Device: Nokia N-Gage / Os: Symbian / Version: 1.v1 / Type: App'
 		],
+
+		// Bookware #1
+		[
+			new ReleaseParser( 'PluralSight.Microsoft.Azure.Network.Engineer-secure.And.Monitor.Networks.Bookware-KNiSO', '0day' ),
+			'Title: Microsoft Azure Network Engineer-secure And Monitor Networks / Group: KNiSO / Source: PluralSight / Type: Bookware'
+		],
+		// Bookware #2 - With language
+		[
+			new ReleaseParser( 'UDEMY.Desarrollando.el.Sistema.SysCarteleria.v2.Visual.FoxPro.SPANISH.BOOKWARE-iLEARN', 'PRE' ),
+			'Title: Desarrollando el Sistema SysCarteleria v2 Visual FoxPro / Group: iLEARN / Source: Udemy / Language: Spanish / Type: Bookware'
+		],
+		// Bookware #3 - With version (update)
+		[
+			new ReleaseParser( 'PluralSight.Angular.Getting.Started.UPDATED.20220706.Bookware-KNiSO', 'PRE' ),
+			'Title: Angular Getting Started / Group: KNiSO / Source: PluralSight / Version: 20220706 / Type: Bookware'
+		],
+		
 
 		// Movies (usually a lot of flags for testing)
 		// Movies #1
@@ -522,8 +534,8 @@ function release_parser_test()
 function release_parser_test_single()
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
-	$release_name = 'Batman_Vengeance_PAL_Rip_XBOX_Read_NFO-XTasy';
-	$release_section = 'XBOX';
+	$release_name = 'PluralSight.Angular.Getting.Started.UPDATED.20220706.Bookware-KNiSO';
+	$release_section = 'PRE';
 	$release = new ReleaseParser( $release_name, $release_section );
 
 	// Check if expectation matches parsed.
@@ -565,5 +577,5 @@ function release_parser_test_file()
 
 // Do tests.
 release_parser_test();
-//release_parser_test_single();
+release_parser_test_single();
 //release_parser_test_file();

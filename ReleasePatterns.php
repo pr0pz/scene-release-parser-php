@@ -6,7 +6,7 @@ namespace ReleaseParser;
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.3.0
+ * @version 1.3.1
  */
 
 class ReleasePatterns {
@@ -16,7 +16,7 @@ class ReleasePatterns {
 	// %varname% will be replaced with the parsed valued for better macthing.
 
 	// Find language (old: (?!sub))
-	const REGEX_LANGUAGE = '/[._(-]%language_pattern%[._)-][._(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|(?:us|gbr|eng|nl|fi|fr|no|dk|de|se|ice)|multi|ml[._)-]|dl[._)-]|dual[._-]|%group%)/i';
+	const REGEX_LANGUAGE = '/[._(-]%language_pattern%[._)-][._(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|bookware|(?:us|gbr|eng|nl|fi|fr|no|dk|de|se|ice)|multi|ml[._)-]|dl[._)-]|dual[._-]|%group%)/i';
 	// Find date
 	const REGEX_DATE = '(\d{2}|\d{4})[._-](\d{2})[._-](\d{2}|\d{4})';
 	// Special date with month name: 24th January 2002 / Sep. 2000 day 5 / January 2000 1
@@ -55,6 +55,8 @@ class ReleasePatterns {
 	// Good for general Software releases (also Games)
 	//const REGEX_TITLE_APP = '/^' . self::REGEX_TITLE . '[._\(-]+(?:' . self::REGEX_VERSION . '[._\(-]?\d|%language%|%flags%|%device%|%format%|%os%|%group%|%source%)/iU';
 	const REGEX_TITLE_APP = '/^' . self::REGEX_TITLE . '[._(-]+(' . self::REGEX_VERSION . '|%device%|%os%|%source%|%resolution%|%language%)[._)-]/iU'; // ungreedy
+	// Bookware
+	const REGEX_TITLE_BOOKWARE = '/^\w+[._-]' . self::REGEX_TITLE . '[._(-]bookware[._)-]/iU'; // ungreedy
 	// Good for all kind of series (also Anime)
 	const REGEX_TITLE_TV = '/^' . self::REGEX_TITLE . '[._-]' . self::REGEX_EPISODE_TV . '/iU';
 	//const REGEX_TITLE_TV_EPISODE = '/' . self::REGEX_EPISODE_TV . '[._-](?:' . self::REGEX_TITLE . '[._\(-]+)?(?:%language%[._\)-]|%resolution%|%source%|%flags%|%format%)/iU';
@@ -67,6 +69,7 @@ class ReleasePatterns {
 	// Extract software version
 	const REGEX_VERSION_TEXT = '(?:v(?:ersione?)?|Updated?[._-]?v?|Build)';
 	const REGEX_VERSION = self::REGEX_VERSION_TEXT . '[._-]?([\d.]+[a-z\d]{0,3}(?![._-]gage))';
+	const REGEX_VERSION_BOOKWARE = 'updated?[._-](\d{8})';
 
 
 	// Type patterns.
@@ -78,6 +81,8 @@ class ReleasePatterns {
 		'Anime' => 'anime',
 		// Software Sections
 		'App' => [ 'app', '0day', 'pda' ],
+		// Bookware
+		'Bookware' => 'bookware',
 		// Ebook
 		'eBook' => 'book',
 		// Font
@@ -110,7 +115,7 @@ class ReleasePatterns {
 		'BDRip' => 'b[dr]+[._-]?rip',
 		'BookMyShow' => 'BMS', // (P2P)
 		'Bootleg' => '(?<!MBluRay.)(?:LIVE|\\d*cd)?.?BOOTLEG',
-		'CABLE' => 'cable',
+		'Cable' => 'cable.\d+', // Live show recorded from radio using cable
 		'CAM' => '(?:new)?cam([._-]?rip)?',
 		'CBS' => 'CBS', // CBS Corporation (P2P)
 		'CD Album' => '\d*cda', // CD Album
@@ -223,7 +228,7 @@ class ReleasePatterns {
 		'CVCD' => 'CVCD', // Compressed Video CD
 		'SVCD' => 'X?SVCD',
 		'VC1' => '(?:Blu.?ray.)?VC.?1',
-		'WMV' => 'WMV',
+		'WMV' => '(?:hd)?WMV',
 		'MDVDR' => 'MDVDR?',
 		'DVDR' => 'DVD[R\d]',
 		'MBluray' => '(Complete.?)?MBLURAY',
@@ -459,7 +464,6 @@ class ReleasePatterns {
 		'ARM' => 'ARM', // software
 		'Audiopack' => 'Audio.?pack', // Only audio releases for movies
 		'Beta' => 'BETA', // software
-		'Bookware' => 'BOOKWARE', // software
 		'Boxset' => 'BOXSET',
 		'Chapterfix' => 'CHAPTER.?FIX', // Disc
 		'Cheats' => 'Cheats', // games
@@ -504,7 +508,7 @@ class ReleasePatterns {
 		'HR' => 'HRp?.(%flags%|%format%|%source%|%year%)', // High resolution
 		'HSBS' => 'HS(?:BS)?',
 		'Hybrid' => 'HYBRID',
-		'Imageset' => [ '(?:Full[._-]?)?(?:IMA?GE?|photo|foto).?SETS?', 'pic.?xxx' ],
+		'Imageset' => [ '(?:Full[._-]?)?(?:IMA?GE?|photo|picture|pic|foto).?SETS?', 'pic.?xxx' ],
 		'IMAX' => 'IMAX',
 		'Internal' => 'iNT(ERNAL)?',
 		'IVTC' => 'IVTC', // Inverce telecine
@@ -527,7 +531,7 @@ class ReleasePatterns {
 		'OEM' => 'OEM',
 		'OST' => 'OST', // music
 		//'PACK' => 'PACK',
-		'Incl. Patch' => [ '(?:incl.)?(?:[a-z]+[._-])?patch(?:ed)?(?:[._-]only)', 'no[a-zA-Z]+[._-]patch(?:ed)?(?:[._-]only)' ], // software
+		'Incl. Patch' => [ '(?:incl.)?(?:[a-z]+[._-])?patch(?:ed)?(?:[._-]only)?', 'no[a-zA-Z]+[._-]patch(?:ed)?(?:[._-]only)' ], // software
 		'Patchfix' => 'patchfix', // Software
 		'Paysite' => 'PAYSITE', // xxx
 		'Portable' => 'Portable', // Software
@@ -593,7 +597,7 @@ class ReleasePatterns {
 		'x64' => 'x64', // software
 		'x86' => 'x86', // software
 		'XSCale' => 'Xscale', // software
-		'XXX' => 'XXX'
+		'XXX' => 'XXX(?!.radio)'
 	];
 
 	// Format: DE + EN + NL / FR / IT / ES
@@ -618,23 +622,29 @@ class ReleasePatterns {
 		'a-league',			// Australia
 		'Premier.?League',	// England (also darts)
 		'La.?Liga',			// Spain
-		'Bundesliga\.\d{4}',// Germany
+		'(?:fussball.\d.|\d.)?Bundesliga\.\d{4}',// Germany
+		'dfb.pokal.\d{4}',	// Germany
 		'Eredivisie',		// Netherlands
 		'Ligue.?1',			// France
-		'Seria.?A',			// Italy
+		'Serie.?A',			// Italy
 		'FA.Cup',			// England
 		'EPL',				// England
 		'EFL.(?:\d{1,4}|cup|championship)', // England
+		'WSL',				// England women
+		'SPFL',				// Scottish
 		'MLS',				// USA
+		'NWSL',				// USA women
 		'CSL',				// China
-		'fifa.(?:world.cup|women|fotbolls|wm|U\d+)', // International
+		'fifa.(?:world.cup|women|fotbolls|futsal|wm|U\d+)', // International
 		'(?:international.)?football.(?:australia|womens|sydney|friendly|ligue1|serie.a|uefa|conference|league)', // International
-		'(?:womens.)?UEFA',	// European
+		'(?:womens.)?UEFA.(champions|cl|cup|euro|europa|super.?cup|Bajnokok|european|pokal|futsal|el|under\d+|u\d+|womens|em|\d{4})',	// European
+		'UCL',				// UEFA Champions League
 		'UEL',				// UEFA Europa league
 		'concacaf',			// North and Middle America
 		'conmebol',			// South America
 		'caf',				// African
 		'afc.asian',		// Asian
+		'match.of.the.day',	// Misc football
 		// Racing
 		'Formul[ae].?[1234E].\d{4}',
 		'F\d.\d{4}',
@@ -669,23 +679,51 @@ class ReleasePatterns {
 		// Wrestle
 		'wwe.(?:nxt|friday|this|main|monday|wrestlemania)',
 		'aew.(?:collision|dynamite|dark)',
+		'New.Japan.Pro-Wrestling',
+		'Game.changer.wrestling',
 		// Hockey
 		'NHL\.(?:\d{4}|stanley.cup|playoffs)',
 		// Baseball
 		'MLB.(?:\d{4}|spring|world.series|pre.?season|playoffs|ws|alcs)',
-		// Boxing
+		// Fighting
 		'boxing.\d{4}.\d{2}.\d{2}',
-		// Sumo
 		'Grand.Sumo',
+		'UFC.\d+',
+		// Olympics
+		'\w+.winter.(paralympics|olympics)',
 		// Tennis
 		'wimbledon.(?:tennis.)?\d{4}',
 		'us.open.\d{4}',
 		'french.open(?:.tennis)?.\d{4}',
 		'australien.open',
+		'WTA.\d{4}',
 		// eSports
 		'LPL.PRO',
 		// World cup of whatever
 		'World.cup'
+	];
+
+	// Bookware/elearning platforms
+	const BOOKWARE = [
+		'Artstation',
+		'Ask.video',
+		'Bassgorilla',
+		'CG.?Circuit',
+		'CreativeLive',
+		'Digital.tutors',
+		'Foundation.patreon',
+		'Groove3',
+		'Gumroad',
+		'LinkedIn(?:.learning)?',
+		'Lynda(?:.com)?',
+		'Mixwiththemasters',
+		'PluralSight',
+		'Retouching.Academy',
+		'Skillshare',
+		'Sonic.academy',
+		'Syngress',
+		'Video2Brain',
+		'Udemy'
 	];
 
 	// Put together some flag/format arrays for better type parsing.
@@ -693,7 +731,7 @@ class ReleasePatterns {
 	const FLAGS_MOVIE = [ 'Dubbed', 'AC3 Dubbed' , 'HDR', 'HDR10', 'HDR10+', 'IMAX', 'Line dubbed', 'Micro dubbed', 'THEATRICAL', 'UNCUT', 'Remux', 'Subbed', 'Directors Cut' ];
 	const FLAGS_EBOOK = [ 'eBook', 'Magazine', 'Comic', 'ePUB' ];
 	const FLAGS_MUSIC = [ 'OST' ];
-	const FLAGS_APPS = [ 'Cracked', 'Regged', 'KEYGEN', 'Incl. Patch', 'Crackfix', 'ISO', 'ARM', 'Intel', 'x86', 'x64', 'Portable' ];
+	const FLAGS_APPS = [ 'Cracked', 'Regged', 'KEYGEN', 'Incl. Patch', 'Crackfix', 'ISO', 'ARM', 'Intel', 'x86', 'x64', 'Portable', 'Patchfix' ];
 	const FLAGS_GAMES = [ 'DLC', 'TRAiNER' ];
 	const FLAGS_ANIME = [ 'Anime', 'Hentai', 'OVA', 'ONA', 'OAD' ];
 	const FLAGS_XXX = [ 'XXX', 'JAV', 'Imageset' ];
@@ -704,7 +742,7 @@ class ReleasePatterns {
 	// Sources
 	const SOURCES_GAMES = [ 'Console DVD', 'Nintendo eShop', 'XBLA' ];
 	const SOURCES_MOVIES = [ 'Bluray', 'CAM', 'DVD', 'HDCAM', 'HDTC', 'Screener', 'Telecine', 'Telesync', 'UHDBD' ];
-	const SOURCES_MUSIC = [ 'AUD', 'CD Album', 'CD EP', 'CD Single', 'DAT Tape', 'DVDA', 'EP', 'FM', 'LP', 'Maxi CD', 'Maxi Single', 'MP3 CD', 'Tape', 'VLS', 'Vinyl', 'Web Single' ];
+	const SOURCES_MUSIC = [ 'AUD', 'Cable', 'CD Album', 'CD EP', 'CD Single', 'DAT Tape', 'DVDA', 'EP', 'FM', 'LP', 'Maxi CD', 'Maxi Single', 'MP3 CD', 'Tape', 'VLS', 'Vinyl', 'Web Single' ];
 	const SOURCES_MVID = [ 'DDC', 'MBluray', 'MDVDR' ];
 	const SOURCES_TV = [ 'ATVP', 'DSR', 'EDTV', 'HDTV', 'PDTV', 'SDTV', 'UHDTV', 'ABC', 'BBC iPlayer', 'CBS', 'Comedy Central', 'DC Universe', 'Discovery Plus', 'HBO Max', 'Hulu', 'MTV Networks', 'NBC', 'TBS' ];
 
