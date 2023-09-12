@@ -9,7 +9,7 @@ require_once __DIR__ . '/ReleasePatterns.php';
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.3.1
+ * @version 1.4.0
  */
 
 class ReleaseParser extends ReleasePatterns
@@ -474,6 +474,16 @@ class ReleaseParser extends ReleasePatterns
 		{
 			// Always save flags as array
 			$flags = !\is_array( $flags ) ? [ $flags ] : $flags;
+
+			// Remove DC flag if DC device was parsed
+			if (
+				$this->get( 'device' ) === 'Sega Dreamcast' &&
+				( $key = \array_search( 'Directors Cut', $flags ) ) !== \false
+			)
+			{
+				unset( $flags[ $key ] );
+			}
+
 			$this->set( 'flags', $flags );
 		}
 	}
@@ -745,12 +755,31 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function isBookware()
 	{
+		if ( $this->hasAttribute( 'Tutorial', 'flags' ) )
+			return \true;
+
 		if ( \preg_match( '/[._(-]bookware[._)-]/i', $this->release ) )
 			return \true;
 
 		foreach( self::BOOKWARE as $bookware )
 			if ( \preg_match( '/^' . $bookware . '[._-]/i', $this->release ) )
 				return \true;
+
+		return \false;
+	}
+
+
+	/**
+	 * Parse music type.
+	 * Artist_Name-Release_Title-Stuff...
+	 * If release has no dots and is separated by hyphens, probably music related release.
+	 *
+	 * @return bool
+	 */
+	private function isMusic()
+	{
+		if ( \preg_match( '/^[\w()]+-[\w()]+-[\w()-]+$/i', $this->release ) )
+			return \true;
 
 		return \false;
 	}
@@ -797,10 +826,18 @@ class ReleaseParser extends ReleasePatterns
 			if (
 				!empty( $this->get( 'device' ) ) ||
 				$this->hasAttribute( self::FLAGS_GAMES, 'flags' ) ||
-				$this->hasAttribute( self::SOURCES_GAMES, 'source' ) )
+				$this->hasAttribute( self::SOURCES_GAMES, 'source' ) ||
+				\in_array( $this->get( 'group' ), self::GROUPS_GAMES ) ||
+				\in_array( $this->get( 'group' ), self::GROUPS_APPS )
+			)
 			{
 				$type = 'Game';
 			}
+		}
+		// Font = Font related flag
+		else if ( $this->hasAttribute( [ 'FONT', 'FONTSET' ], 'flags' ) )
+		{
+			$type = 'Font';
 		}
 		// Abook = Abook related flag
 		else if( $this->hasAttribute( 'ABOOK', 'flags' ) )
@@ -809,14 +846,43 @@ class ReleaseParser extends ReleasePatterns
 		}
 		// Music related sources
 		else if (
+			$this->isMusic() ||
 			$this->hasAttribute( self::SOURCES_MUSIC, 'source' ) ||
 			$this->hasAttribute( self::FLAGS_MUSIC, 'flags' )
 		)
 		{
 			$type = 'Music';
 
-			if ( !empty( $this->get( 'resolution') ) )
+			if (
+				!empty( $this->get( 'device' ) ) ||
+				$this->hasAttribute( self::FLAGS_GAMES, 'flags' ) ||
+				$this->hasAttribute( self::SOURCES_GAMES, 'source' ) ||
+				\in_array( $this->get( 'group' ), self::GROUPS_GAMES )
+			)
+			{
+				$type = 'Game';
+			}
+			else if ( \in_array( $this->get( 'group' ), self::GROUPS_APPS ) )
+			{
+				$type = 'App';
+			}
+			else if (
+				!empty( $this->get( 'resolution') ) ||
+				$this->hasAttribute( self::FORMATS_MVID, 'format' ) ||
+				$this->hasAttribute( self::FORMATS_VIDEO, 'format' ) ||
+				$this->hasAttribute( self::SOURCES_MVID, 'source' )
+			)
+			{
 				$type = 'MusicVideo';
+			}
+			else if (
+				( !empty( $this->get( 'version' ) ) && $this->get( 'source' ) === \null ) ||
+				!empty( $this->get( 'os' ) ) ||
+				$this->hasAttribute( self::FLAGS_APPS, 'flags' )
+			)
+			{
+				$type = 'App';
+			}
 		}
 		// Ebook = ebook related flag
 		else if ( $this->hasAttribute( self::FLAGS_EBOOK, 'flags' ) )
@@ -849,6 +915,25 @@ class ReleaseParser extends ReleasePatterns
 		{
 			$type = 'MusicVideo';
 		}
+		// Games = if device was found or game related flags
+		else if (
+			$this->hasAttribute( self::FLAGS_GAMES, 'flags' ) ||
+			$this->hasAttribute( self::SOURCES_GAMES, 'source' ) ||
+			\in_array( $this->get( 'group' ), self::GROUPS_GAMES )
+		)
+		{
+			$type = 'Game';
+		}
+		// Games = if device was found or game related flags
+		else if (
+			!empty( $this->get( 'device' ) )
+		)
+		{
+			$type = 'Game';
+
+			if ( !empty( $this->get( 'os' ) ) )
+				$type = 'App';
+		}
 		// Do We have an episode?
 		else if (
 			!empty( $this->get( 'episode' ) ) ||
@@ -867,14 +952,7 @@ class ReleaseParser extends ReleasePatterns
 		// Description with date inside brackets is nearly always music or musicvideo
 		else if ( \preg_match( self::REGEX_DATE_MUSIC, $this->get( 'release' ) ) )
 		{
-			if ( !empty( $this->get( 'resolution' ) ) )
-			{
-				$type = 'MusicVideo';
-			}
-			else
-			{
-				$type = 'Music';
-			}
+			$type = !empty( $this->get( 'resolution' ) ) ? 'MusicVideo' : 'Music';
 		}
 		// Has date and a resolution? probably TV
 		else if (
@@ -894,49 +972,28 @@ class ReleaseParser extends ReleasePatterns
 		{
 			$type = 'Music';
 
-			if ( $this->get( 'version' ) !== \null && $this->get( 'source' ) === \null )
+			if ( !empty( $this->get( 'version' ) ) && $this->get( 'source' ) === \null )
 				$type = 'App';
-		}
-		// Font = Font related flag
-		else if ( $this->hasAttribute( [ 'FONT', 'FONTSET' ], 'flags' ) )
-		{
-			$type = 'Font';
-		}
-		// Games = if device was found or game related flags
-		else if (
-			(
-				!empty( $this->get( 'device' ) ) &&
-				(
-					empty( $this->get( 'resolution' ) ) &&
-					empty( $this->get( 'format' ) ) &&
-					empty( $this->get( 'source' ) )
-				)
-			) ||
-			$this->hasAttribute( self::FLAGS_GAMES, 'flags' ) ||
-			$this->hasAttribute( self::SOURCES_GAMES, 'source' ) )
-		{
-			$type = 'Game';
-
-			// App if OS was parsed
-			if ( !empty( $this->get( 'os' ) ) )
-			{
-				$type = 'App';
-			}
 		}
 		// App = if os is set or software (also game) related flags
 		else if (
 			(
-				!empty( $this->get( 'os' ) ) ||
-				!empty( $this->get( 'version' ) ) ||
-				$this->hasAttribute( self::FLAGS_APPS, 'flags' )
-			) &&
-			!$this->hasAttribute( self::FORMATS_VIDEO, 'format' ) )
+				(
+					!empty( $this->get( 'os' ) ) ||
+					!empty( $this->get( 'version' ) ) ||
+					$this->hasAttribute( self::FLAGS_APPS, 'flags' )
+				) &&
+				!$this->hasAttribute( self::FORMATS_VIDEO, 'format' )
+			) ||
+			\in_array( $this->get( 'group' ), self::GROUPS_APPS )
+		)
 		{
 			$type = 'App';
 		}
 		// Last time to check for some movie stuff
 		else if (
 			$this->hasAttribute( self::SOURCES_MOVIES, 'source' ) ||
+			$this->hasAttribute( self::FORMATS_VIDEO, 'format' ) ||
 			( $this->get( 'resolution' ) &&
 				(
 					$this->get( 'year' ) ||
@@ -1115,13 +1172,16 @@ class ReleaseParser extends ReleasePatterns
 				$regex_pattern = self::REGEX_TITLE_APP;
 				$regex_used = 'REGEX_TITLE_APP';
 
+				// Search and replace pattern release name
+				//$release_name_cleaned = $this->cleanup( $release_name_cleaned, 'disc' );
+
 				// Search and replace pattern in regex pattern for better matching
-				//$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'source' ] );
 				$regex_pattern = $this->cleanupPattern( $release_name_cleaned, $regex_pattern, [ 'device', 'os', 'resolution' ] );
+
 				// Also remove source if game
 				if ( $type === 'game' )
 				{
-					$regex_pattern = $this->cleanupPattern( $release_name_cleaned, $regex_pattern, [ 'language', 'source' ] );	
+					$regex_pattern = $this->cleanupPattern( $release_name_cleaned, $regex_pattern, [ 'disc', 'language', 'source' ] );	
 				}
 
 				// Match title
@@ -1147,7 +1207,7 @@ class ReleaseParser extends ReleasePatterns
 
 				// Only needed here for releases that have episodes
 				// Maybe year is before episode and have to be removed
-				$release_name_no_year = $this->cleanup( $release_name_cleaned, [ 'year' ] );
+				$release_name_no_year = $this->cleanup( $release_name_cleaned, [ 'disc', 'format', 'year' ] );
 
 				// Match title
 				\preg_match( $regex_pattern, $release_name_no_year, $matches );
@@ -1435,7 +1495,7 @@ class ReleaseParser extends ReleasePatterns
 					$regex_used = 'REGEX_TITLE_MOVIE';
 
 					// Search and replace pattern in regex pattern for better matching
-					$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'year', 'audio' ] );
+					$regex_pattern = $this->cleanupPattern( $this->release, $regex_pattern, [ 'audio', 'disc', 'flags', 'format', 'language', 'resolution', 'source', 'year' ] );
 
 					// Match title
 					\preg_match( $regex_pattern, $release_name_cleaned, $matches );
@@ -1531,7 +1591,8 @@ class ReleaseParser extends ReleasePatterns
 						$attr_key === 'Cover' ||
 						$attr_key === 'Docu' ||
 						$attr_key === 'HR' ||
-						$attr_key === 'Vertical'
+						$attr_key === 'Vertical' ||
+						$attr_key === 'TRAiNER'
 					)
 					{
 						$pattern = $this->cleanupPattern( $release_name_cleaned, $pattern, [ 'flags', 'format', 'source', 'language', 'resolution' ] );
@@ -1542,6 +1603,12 @@ class ReleaseParser extends ReleasePatterns
 				$separators = '[._-]';
 				// Default regex
 				$regex_pattern = '/(' . $separators . ')' . $pattern . '\1/' . $flags;
+
+				// Special case for DC, so dont wrongfully parse DC device, should be DC flag most of the times
+				if ( $type === 'device' && $pattern === 'DC')
+				{
+					$regex_pattern = '/' . $separators . $pattern . '-([\w.-]+){1,2}$/' . $flags;
+				}
 
 				// Check if pattern is inside release name
 				\preg_match( $regex_pattern, $release_name_cleaned, $matches );
@@ -1576,8 +1643,8 @@ class ReleaseParser extends ReleasePatterns
 			}
 
 			// Stop after first source found
-			if ( $type === 'source' && !empty( $attribute_keys ) )
-				break;
+			//if ( $type === 'source' && !empty( $attribute_keys ) )
+				//break;
 		}
 
 		// Transform array to string if we have just one value
@@ -1696,6 +1763,12 @@ class ReleaseParser extends ReleasePatterns
 						$attributes[] = self::DEVICE[ $information_value ];
 						break;
 
+					case 'disc':
+						if ( !empty( $this->get( 'disc' ) ) )
+							$attributes[] = self::REGEX_DISC;
+
+						break;
+
 					case 'format':
 						// Check if we need to loop array
 						if ( \is_array( $information_value ) )
@@ -1760,7 +1833,21 @@ class ReleaseParser extends ReleasePatterns
 						break;
 					
 					case 'source':
-						$attributes[] = self::SOURCE[ $information_value ];
+						// Needed for bookware source which is dynamic
+						if ( \is_array( $information_value ) )
+						{
+							foreach( $information_value as $value )
+							{
+								if ( !empty( self::SOURCE[ $value ] ) )
+								{
+									$attributes[] = self::SOURCE[ $value ];
+								}
+							}
+						}
+						else if ( !empty( self::SOURCE[ $information_value ] ) )
+						{
+							$attributes[] = self::SOURCE[ $information_value ];
+						}
 						break;
 						
 					case 'version':
@@ -1875,6 +1962,10 @@ class ReleaseParser extends ReleasePatterns
 						}
 						break;
 
+					case 'disc':
+						$attributes[] = self::REGEX_DISC;
+						break;
+
 					case 'flags':
 						// Flags are always saved as array, so loop them.
 						foreach ( $information_value as $flag )
@@ -1945,7 +2036,17 @@ class ReleaseParser extends ReleasePatterns
 
 					case 'source':
 						// Needed for bookware source which is dynamic
-						if ( isset( self::SOURCE[ $information_value ] ) )
+						if ( \is_array( $information_value ) )
+						{
+							foreach( $information_value as $value )
+							{
+								if ( !empty( self::SOURCE[ $value ] ) )
+								{
+									$attributes[] = self::SOURCE[ $value ];
+								}
+							}
+						}
+						else if ( !empty( self::SOURCE[ $information_value ] ) )
 						{
 							$attributes[] = self::SOURCE[ $information_value ];
 						}
@@ -1992,6 +2093,19 @@ class ReleaseParser extends ReleasePatterns
 	{
 		$type = \strtolower( $this->get( 'type' ) );
 
+		if ( $type === 'movie' || $type === 'tv' )
+		{
+			if (
+				!empty( $this->get( 'source' ) ) &&
+				!empty( $this->get( 'format' ) ) &&
+				!empty( $this->get( 'resolution' ) ) &&
+				$this->get( 'source' ) == $this->get( 'format' )
+			)
+			{
+				$this->set( 'format', \null );
+			}
+		}
+
 		if ( $type === 'movie' )
 		{			
 			// Remove version if it's a movie (falsely parsed from release name)
@@ -2014,6 +2128,18 @@ class ReleaseParser extends ReleasePatterns
 				$this->set( 'source', null );
 			}
 		}
+		else if ( $type === 'game' )
+		{
+			// Remove Anime flag, not need for games
+			$flags = $this->get( 'flags' );
+			if (
+				!empty( $flags ) &&
+				( $key = array_search( 'Anime', $flags ) ) !== \false )
+			{
+				unset( $flags[ $key ] );
+				$this->set( 'flags', $flags );
+			}
+		}
 		else if ( $type === 'ebook' )
 		{
 			if ( $this->get( 'format' ) === 'Hybrid' )
@@ -2034,6 +2160,20 @@ class ReleaseParser extends ReleasePatterns
 		else if ( $type === 'bookware' )
 		{
 			$this->set( 'flags', \null );
+		}
+
+		if ( $type === 'movie' || $type === 'xxx' || $type === 'tv' )
+		{
+			// CHange source DVD to format DVDR if no res and format given
+			if (
+				$this->get( 'source' ) === 'DVD' &&
+				empty( $this->get( 'resolution' ) ) &&
+				empty( $this->get( 'format' ) )
+			)
+			{
+				$this->set( 'format', 'DVDR' );
+				$this->set( 'source', \null );
+			}
 		}
 
 		if ( $type !== 'app' && $type !== 'game' && $this->hasAttribute( 'TRAiNER', 'flags' ) )

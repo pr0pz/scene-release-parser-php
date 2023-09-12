@@ -10,7 +10,7 @@ require_once __DIR__ . '/ReleaseParser.php';
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.3.1
+ * @version 1.4.0
  */
 
 /**
@@ -53,6 +53,18 @@ function release_parser_test()
 			new ReleaseParser( 'Madshot_NSW-VENOM', 'games' ),
 			'Title: Madshot / Group: VENOM / Device: Nintendo Switch / Type: Game'
 		],
+		// Game #3 - COnsole disc
+		[
+			new ReleaseParser( 'NFL_Madden_2007_USA_BLUERAY_PS3-PARADOX', 'PS3' ),
+			'Title: NFL Madden 2007 / Group: PARADOX / Year: 2007 / Source: Console Disc / Device: Playstation 3 / Language: English / Type: Game'
+		],
+		// Game #4
+		[
+			new ReleaseParser( 'Super_Smash_Bros_Brawl_DVD5_PAL_VC_SMD_Wii-WiiLeet', 'Wii' ),
+			'Title: Super Smash Bros Brawl / Group: WiiLeet / Disc: 5 / Format: DVDR / Resolution: PAL / Device: Nintendo WII / Type: Game'
+		],
+
+		
 
 		// Apps
 		// Apps #1
@@ -68,7 +80,7 @@ function release_parser_test()
 		// Apps #3
 		[
 			new ReleaseParser( 'Aviano.Update.v1.03-ANOMALY', '0day' ),
-			'Title: Aviano / Group: ANOMALY / Flags: Update / Version: 1.03 / Type: App'
+			'Title: Aviano / Group: ANOMALY / Flags: Update / Version: 1.03 / Type: Game'
 		],
 		// Apps #4
 		[
@@ -88,7 +100,7 @@ function release_parser_test()
 		// Apps #7 - Remove OS from rls name
 		[
 			new ReleaseParser( 'Broforce.Forever.MacOS-I_KnoW', 'Pre' ),
-			'Title: Broforce Forever / Group: I_KnoW / Os: macOS / Type: App'
+			'Title: Broforce Forever / Group: I_KnoW / Os: macOS / Type: Game'
 		],
 		// Apps #8 - Symbian App - dont falsely parse episode and season
 		[
@@ -117,7 +129,7 @@ function release_parser_test()
 		// Movies #1
 		[
 			new ReleaseParser( 'Harry.Potter.und.die.Kammer.des.Schreckens.TS.Line.Dubbed.German.INTERNAL.VCD.CD2.REPACK-TGSC', 'Apps' ),
-			'Title: Harry Potter und die Kammer des Schreckens / Group: TGSC / Flags: Internal, Line dubbed, Repack / Source: Telesync / Format: VCD / Language: German / Type: Movie'
+			'Title: Harry Potter und die Kammer des Schreckens / Group: TGSC / Disc: 2 / Flags: Internal, Line dubbed, Repack / Source: Telesync / Format: VCD / Language: German / Type: Movie'
 		],
 		// Movies #2
 		[
@@ -127,7 +139,7 @@ function release_parser_test()
 		// Movies #3
 		[
 			new ReleaseParser( 'Die.Bourne.Verschwoerung.German.2004.INTERNAL.No.Bock.uff.Proper.READ.NFO.AC3.Dubbed.DL.DVDR-Cinemaniacs', 'DVDR' ),
-			'Title: Die Bourne Verschwoerung / Group: Cinemaniacs / Year: 2004 / Flags: Dubbed, Internal, Proper, READNFO / Source: DVD / Format: DVDR / Audio: AC3 / Language: German, Multilingual / Type: Movie'
+			'Title: Die Bourne Verschwoerung / Group: Cinemaniacs / Year: 2004 / Flags: Dubbed, Internal, Proper, READNFO / Format: DVDR / Audio: AC3 / Language: German, Multilingual / Type: Movie'
 		],
 		// Movies #4
 		[
@@ -142,7 +154,7 @@ function release_parser_test()
 		// Movies #6
 		[
 			new ReleaseParser( 'Batman.v.Superman.Dawn.of.Justice.2016.IMAX.German.DL.TrueHD.Atmos.DUBBED.2160p.UHD.BluRay.x265-GSG9', 'PRE' ),
-			'Title: Batman v Superman Dawn of Justice / Group: GSG9 / Year: 2016 / Flags: Dubbed, IMAX, UHD / Source: Bluray / Format: x265 / Resolution: 2160p / Audio: Dolby Atmos, Dolby trueHD / Language: German, Multilingual / Type: Movie'
+			'Title: Batman v Superman Dawn of Justice / Group: GSG9 / Year: 2016 / Flags: Dubbed, IMAX / Source: Bluray / Format: x265 / Resolution: 2160p / Audio: Dolby Atmos, Dolby trueHD / Language: German, Multilingual / Type: Movie'
 		],
 		// Movies #7 - lots of flags
 		[
@@ -157,7 +169,7 @@ function release_parser_test()
 		// Movies #9 - P2P lots of stuff
 		[
 			new ReleaseParser( 'Angel.Heart.1987.German.DTSMAD.5.1.DL.2160p.UHD.BluRay.HDR.DV.HEVC.Remux-HDSource', 'BLuray' ),
-			'Title: Angel Heart / Group: HDSource / Year: 1987 / Flags: Dolby Vision, HDR, Remux, UHD / Source: Bluray / Format: HEVC / Resolution: 2160p / Audio: DTS-HD MA, 5.1 / Language: German, Multilingual / Type: Movie'
+			'Title: Angel Heart / Group: HDSource / Year: 1987 / Flags: Dolby Vision, HDR, Remux / Source: Bluray / Format: HEVC / Resolution: 2160p / Audio: DTS-HD MA, 5.1 / Language: German, Multilingual / Type: Movie'
 		],
 		// Movies #10 - Multiple lang codes
 		[
@@ -239,7 +251,7 @@ function release_parser_test()
 		// TV #13 - Complete Disc instead of episode
 		[
 			new ReleaseParser( 'Tulsa.King.S01D03.German.ML.COMPLETE.PAL.DVD9-NAiB', 'DVDR' ),
-			'Title: Tulsa King / Group: NAiB / Season: 1 / Disc: 3 / Flags: Complete / Source: DVD / Format: DVDR / Resolution: PAL / Language: German, Multilingual / Type: TV'
+			'Title: Tulsa King / Group: NAiB / Season: 1 / Disc: 3 / Flags: Complete / Format: DVDR / Resolution: PAL / Language: German, Multilingual / Type: TV'
 		],
 		// TV #14 - Episode pattern at beginning of release name
 		[
@@ -534,8 +546,8 @@ function release_parser_test()
 function release_parser_test_single()
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
-	$release_name = 'PluralSight.Angular.Getting.Started.UPDATED.20220706.Bookware-KNiSO';
-	$release_section = 'PRE';
+	$release_name = 'A.Todo.Gas.4.TS.XviD.LINE.PROPER.SCREENER.2009.ES-iND';
+	$release_section = 'screener';
 	$release = new ReleaseParser( $release_name, $release_section );
 
 	// Check if expectation matches parsed.
