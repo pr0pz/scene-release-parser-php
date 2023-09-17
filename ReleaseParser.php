@@ -9,7 +9,7 @@ require_once __DIR__ . '/ReleasePatterns.php';
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.4.0
+ * @version 1.4.1
  */
 
 class ReleaseParser extends ReleasePatterns
@@ -448,7 +448,7 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseDevice()
 	{
-		if ( !$this->isBookware() )
+		if ( !$this->isType( 'bookware' ) )
 		{
 			$device = $this->parseAttribute( self::DEVICE, 'device' );
 			if ( !empty( $device ) )
@@ -515,18 +515,26 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseVersion()
 	{
-		if ( $this->isBookware() )
+		if ( $this->isType( 'bookware' ) )
 		{
 			\preg_match( '/[._-]' . self::REGEX_VERSION_BOOKWARE . '[._-]/i', $this->get( 'release' ), $matches );
 		}
-		else
+		else if ( !$this->isType( 'ebook' ) && !$this->isType( 'abook' ) && !$this->isType( 'music' ) )
 		{
 			// Cleanup release name for better matching
 			$release_name_cleaned = $this->cleanup( $this->release, [ 'flags', 'device' ] );
 			$regex_pattern = '/[._-]' . self::REGEX_VERSION . '[._-]/i';
 			\preg_match( $regex_pattern, $release_name_cleaned, $matches );
 		}
-		if ( !empty( $matches ) ) $this->set( 'version', \trim( $matches[1], '.' ) );
+		if ( !empty( $matches ) )
+		{
+			$version = \trim( $matches[1], '.' );
+			// Remove win from version for some app cases
+			if ( \str_contains( \strtolower( $version ), 'win' ) )
+				$version = \trim( \str_replace( 'win', '', \strtolower( $version ) ), '.' );
+
+			$this->set( 'version', $version );
+		}
 	}
 
 
@@ -537,7 +545,7 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseSource()
 	{
-		if ( $this->isBookware() )
+		if ( $this->isType( 'bookware' ) )
 		{
 			foreach( self::BOOKWARE as $bookware )
 			{
@@ -578,7 +586,7 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseFormat()
 	{
-		if ( !$this->isBookware() )
+		if ( !$this->isType( 'bookware' ) )
 		{
 			$format = $this->parseAttribute( self::FORMAT, 'format' );
 
@@ -599,7 +607,7 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseResolution()
 	{
-		if ( !$this->isBookware() )
+		if ( !$this->isType( 'bookware' ) && !$this->isType( 'ebook' ) && !$this->isType( 'abook' ) )
 		{
 			$resolution = $this->parseAttribute( self::RESOLUTION );
 
@@ -620,7 +628,7 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseAudio()
 	{
-		if ( !$this->isBookware() )
+		if ( !$this->isType( 'bookware' ) && !$this->isType( 'ebook' ) )
 		{
 			$audio = $this->parseAttribute( self::AUDIO );
 			if ( !empty( $audio ) ) $this->set( 'audio', $audio );
@@ -635,7 +643,7 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseOs()
 	{
-		if ( !$this->isBookware() )
+		if ( !$this->isType( 'bookware' ) )
 		{
 			$os = $this->parseAttribute( self::OS );
 			if ( !empty( $os ) ) $this->set( 'os', $os );
@@ -650,7 +658,7 @@ class ReleaseParser extends ReleasePatterns
 	 */
 	private function parseSeason()
 	{
-		if ( !$this->isBookware() )
+		if ( !$this->isType( 'bookware' ) && !$this->isType( 'ebook' ) )
 		{
 			\preg_match( self::REGEX_SEASON, $this->release, $matches );
 
@@ -694,10 +702,16 @@ class ReleaseParser extends ReleasePatterns
 			$this->get( 'device' ) !== 'Playstation' &&
 			!\preg_match( '/[._-]N(7650|66\d0|36\d0)[._-]/i', $this->release ) &&
 			!$this->hasAttribute( [ 'Extended', 'Special Edition' ], 'flags' ) &&
-			!$this->isBookware()
+			!$this->isType( 'bookware' )
 		)
 		{
-			\preg_match( '/[._-]' . self::REGEX_EPISODE . '[._-]/i', $this->release, $matches );
+			$regex_pattern = self::REGEX_EPISODE;
+			if ( $this->isType( 'ebook' ) || $this->isType( 'abook' ) || $this->isType( 'music' ) )
+			{
+				$regex_pattern = self::REGEX_EPISODE_OTHER;
+			}
+
+			\preg_match( '/[._-]' . $regex_pattern . '[._-]/i', $this->release, $matches );
 
 			if ( !empty( $matches ) )
 			{
@@ -734,54 +748,58 @@ class ReleaseParser extends ReleasePatterns
 
 
 	/**
-	 * Parse Sports type.
-	 *
-	 * @return bool
-	 */
-	private function isSports()
-	{
-		foreach( self::SPORTS as $sport )
-			if ( \preg_match( '/^' . $sport . '[._-]/i', $this->release ) )
-				return \true;
-
-		return \false;
-	}
-
-
-	/**
 	 * Parse Bookware type.
 	 *
 	 * @return bool
 	 */
-	private function isBookware()
+	private function isType( $type = '' )
 	{
-		if ( $this->hasAttribute( 'Tutorial', 'flags' ) )
-			return \true;
+		if ( $type === 'sports' )
+		{
+			foreach( self::SPORTS as $sport )
+				if ( \preg_match( '/^' . $sport . '[._]/i', $this->release ) )
+					return \true;
 
-		if ( \preg_match( '/[._(-]bookware[._)-]/i', $this->release ) )
-			return \true;
-
-		foreach( self::BOOKWARE as $bookware )
-			if ( \preg_match( '/^' . $bookware . '[._-]/i', $this->release ) )
+			return \false;
+		}
+		else if ( $type === 'bookware' )
+		{
+			if ( $this->hasAttribute( 'Tutorial', 'flags' ) )
 				return \true;
 
-		return \false;
-	}
+			if ( \preg_match( '/[._(-]bookware[._)-]/i', $this->release ) )
+				return \true;
 
+			foreach( self::BOOKWARE as $bookware )
+				if ( \preg_match( '/^' . $bookware . '[._-]/i', $this->release ) )
+					return \true;
 
-	/**
-	 * Parse music type.
-	 * Artist_Name-Release_Title-Stuff...
-	 * If release has no dots and is separated by hyphens, probably music related release.
-	 *
-	 * @return bool
-	 */
-	private function isMusic()
-	{
-		if ( \preg_match( '/^[\w()]+-[\w()]+-[\w()-]+$/i', $this->release ) )
-			return \true;
+			return \false;
+		}
+		else if ( $type === 'music' )
+		{
+			if ( \preg_match( '/^[\w()]+-[\w()]+-[\w()-]+$/i', $this->release ) )
+				return \true;
 
-		return \false;
+			if ( \preg_match( '/^VA-/i', $this->release ) )
+				return \true;
+
+			return \false;
+		}
+		else if ( $type === 'ebook' )
+		{
+			if ( \preg_match( '/[._-](ebook(.\d+)?|comics?)-\w+$/i', $this->release ) )
+				return \true;
+
+			return \false;
+		}
+		else if ( $type === 'abook' )
+		{
+			if ( \preg_match( '/[._(-]A(?:UDiO?)?BOOKS?\d*[._)-]/i', $this->release ) )
+				return \true;
+
+			return \false;
+		}
 	}
 
 
@@ -814,12 +832,12 @@ class ReleaseParser extends ReleasePatterns
 		$type = '';
 
 		// Match bookware
-		if ( $this->isBookware() )
+		if ( $this->isType( 'bookware' ) )
 		{
-			$type = 'Bookware';
+			$type = $this->isType( 'ebook' ) ? 'eBook' : 'Bookware';
 		}
 		// Match sports events
-		else if ( $this->isSports() )
+		else if ( $this->isType( 'sports' ) )
 		{
 			$type = 'Sports';
 
@@ -840,13 +858,13 @@ class ReleaseParser extends ReleasePatterns
 			$type = 'Font';
 		}
 		// Abook = Abook related flag
-		else if( $this->hasAttribute( 'ABOOK', 'flags' ) )
+		else if( $this->isType( 'abook' ) )
 		{
 			$type = 'ABook';
 		}
 		// Music related sources
 		else if (
-			$this->isMusic() ||
+			$this->isType( 'music' ) ||
 			$this->hasAttribute( self::SOURCES_MUSIC, 'source' ) ||
 			$this->hasAttribute( self::FLAGS_MUSIC, 'flags' )
 		)
@@ -885,7 +903,10 @@ class ReleaseParser extends ReleasePatterns
 			}
 		}
 		// Ebook = ebook related flag
-		else if ( $this->hasAttribute( self::FLAGS_EBOOK, 'flags' ) )
+		else if (
+			$this->isType( 'ebook' ) ||
+			$this->hasAttribute( self::FLAGS_EBOOK, 'flags' )
+		)
 		{
 			$type = 'eBook';
 		}
@@ -1601,40 +1622,47 @@ class ReleaseParser extends ReleasePatterns
 
 				// All separators
 				$separators = '[._-]';
-				// Default regex
-				$regex_pattern = '/(' . $separators . ')' . $pattern . '\1/' . $flags;
+				$matches = \null;
 
-				// Special case for DC, so dont wrongfully parse DC device, should be DC flag most of the times
-				if ( $type === 'device' && $pattern === 'DC')
+				// Special cases: Some patterns have to match end of release name, so ignore firs regex results
+				if ( \str_contains( $pattern, '$' ) )
 				{
-					$regex_pattern = '/' . $separators . $pattern . '-([\w.-]+){1,2}$/' . $flags;
-				}
+					$pattern = \str_replace( '$', '', $pattern );
+					$regex_pattern = '/' . $separators . $pattern . '-(?:[\w.-]+){1,2}$/' . $flags;
 
-				// Check if pattern is inside release name
-				\preg_match( $regex_pattern, $release_name_cleaned, $matches );
-
-				// Check if is last keyword before group
-				if ( empty( $matches ) )
-				{
-					$regex_pattern = '/' . $separators . $pattern . '-([\w.-]+){1,2}$/' . $flags;
+					// Check if pattern is inside release name
 					\preg_match( $regex_pattern, $release_name_cleaned, $matches );
 				}
-
-				// Check with parenthesis
-				if ( empty( $matches ) )
+				else
 				{
-					$regex_pattern = '/\(' . $pattern . '\)/' . $flags;
+					// Default regex
+					$regex_pattern = '/(' . $separators . ')' . $pattern . '\1/' . $flags;
+					// Check if pattern is inside release name
 					\preg_match( $regex_pattern, $release_name_cleaned, $matches );
-				}
 
-				// No? Recheck with string at end of release name
-				// - only format
-				// - separator only ._
-				// - if group is missing
-				if ( empty( $matches ) && $type === 'format' )
-				{
-					$regex_pattern = '/[._]' . $pattern . '$/' . $flags;
-					\preg_match( $regex_pattern, $release_name_cleaned, $matches );
+					// Check if is last keyword before group
+					if ( empty( $matches ) )
+					{
+						$regex_pattern = '/' . $separators . $pattern . '-(?:[\w.-]+){1,2}$/' . $flags;
+						\preg_match( $regex_pattern, $release_name_cleaned, $matches );
+					}
+
+					// Check with parenthesis
+					if ( empty( $matches ) )
+					{
+						$regex_pattern = '/\(' . $pattern . '\)/' . $flags;
+						\preg_match( $regex_pattern, $release_name_cleaned, $matches );
+					}
+
+					// No? Recheck with string at end of release name
+					// - only format
+					// - separator only ._
+					// - if group is missing
+					if ( empty( $matches ) && $type === 'format' )
+					{
+						$regex_pattern = '/[._]' . $pattern . '$/' . $flags;
+						\preg_match( $regex_pattern, $release_name_cleaned, $matches );
+					}
 				}
 
 				// Yes? Return attribute array key as value
@@ -1785,7 +1813,14 @@ class ReleaseParser extends ReleasePatterns
 						break;
 
 					case 'episode':
-						$attributes[] = self::REGEX_EPISODE;
+						if ( $this->isType( 'ebook' ) || $this->isType( 'abook' ) )
+						{
+							$attributes[] = self::REGEX_EPISODE_OTHER;
+						}
+						else
+						{
+							$attributes[] = self::REGEX_EPISODE;
+						}
 						break;
 
 					case 'flags':
@@ -1851,7 +1886,7 @@ class ReleaseParser extends ReleasePatterns
 						break;
 						
 					case 'version':
-						if ( $this->isBookware() )
+						if ( $this->isType( 'bookware' ) )
 						{
 							$attributes[] = self::REGEX_VERSION_BOOKWARE;
 						}
@@ -1880,8 +1915,17 @@ class ReleaseParser extends ReleasePatterns
 							if ( $information === 'os' )
 								$value = '(?:for[._-])?' . $value;
 
+							$regex_pattern = '/[._(-]' . $value . '[._)-]/i';
+
+							// Remove $ from specific patterns
+							if ( \str_contains( $value, '$' ) )
+							{
+								$value = \str_replace( '$', '', $value );
+								$regex_pattern = '/[._(-]' . $value . '-(?:[\w.-]+){1,2}$/i';
+							}
+
 							// We need to replace all findings with double dots for proper matching later on.
-							$release_name = \preg_replace( '/[._(-]' . $value . '[._)-]/i', '..', $release_name );
+							$release_name = \preg_replace( $regex_pattern, '..', $release_name );
 
 							// Replace format at the end if no group name
 							if ( $information === 'format' )
@@ -2068,7 +2112,17 @@ class ReleaseParser extends ReleasePatterns
 						$attribute = !\is_array( $attribute ) ? [ $attribute ] : $attribute;
 						foreach ( $attribute as $value )
 						{
-							$value = $information === 'os' ? '(?:for[._-])?' . $value : $value;
+							// Exception for OS
+							if ( $information === 'os' )
+								$value = '(?:for[._-])?' . $value;
+
+							// Remove $ from specific patterns
+							if ( \str_contains( $value, '$' ) )
+							{
+								$value = \str_replace( '$', '', $value );
+								$value = $value . '-(?:[\w.-]+){1,2}$';
+							}
+
 							// Put to values and separate by | if needed.
 							$values = !empty( $values ) ? $values . '|' . $value : $value;
 						}

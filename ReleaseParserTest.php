@@ -10,7 +10,7 @@ require_once __DIR__ . '/ReleaseParser.php';
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.4.0
+ * @version 1.4.1
  */
 
 /**
@@ -106,6 +106,11 @@ function release_parser_test()
 		[
 			new ReleaseParser( 'PocketTorch.AquaCalendar.V1.v1.2.N3650.NGAGE.SX1.S60.SymbianOS.READ.NFO.Cracked-aSxPDA', 'NGAGE' ),
 			'Title: PocketTorch AquaCalendar / Group: aSxPDA / Flags: Cracked, READNFO / Device: Nokia N-Gage / Os: Symbian / Version: 1.v1 / Type: App'
+		],
+		// Apps #9 - Win stuff
+		[
+			new ReleaseParser( 'TweakNow.PowerPack.2003.Professional.v1.2.Win.98.ME.2K.XP.RETAIL-iPA', 'APPS' ),
+			'Title: TweakNow PowerPack 2003 Professional / Group: iPA / Year: 2003 / Flags: Retail / Os: Windows / Version: 1.2 / Type: App'
 		],
 
 		// Bookware #1
@@ -395,89 +400,89 @@ function release_parser_test()
 		// eBook #1 - Basic with title and title extra
 		[
 			new ReleaseParser( 'IDW.-.Witch.And.Wizard.Battle.For.Shadowland.2012.Hybrid.Comic.eBook-BitBook', 'ebook' ),
-			'Author: IDW / Title: Witch And Wizard Battle For Shadowland / Group: BitBook / Year: 2012 / Flags: Comic, eBook / Format: Hybrid / Type: eBook'
+			'Author: IDW / Title: Witch And Wizard Battle For Shadowland / Group: BitBook / Year: 2012 / Flags: Comic / Format: Hybrid / Type: eBook'
 		],
 		// eBook #2 - Newspaper with date (09.28.2021) = 28.09.2021 (reformatted)
 		[
 			new ReleaseParser( 'La.Gazzetta.Dello.Sport.09.28.2021.iTALiAN.RETAiL.eBook-DiVER', 'ebook' ),
-			'Title: La Gazzetta Dello Sport / Group: DiVER / Year: 2021 / Date: 28.09.2021 / Flags: eBook, Retail / Language: Italian / Type: eBook'
+			'Title: La Gazzetta Dello Sport / Group: DiVER / Year: 2021 / Date: 28.09.2021 / Flags: Retail / Language: Italian / Type: eBook'
 		],
 		// eBook #3 - Magazine with monthname and year (September 20201)
 		[
 			new ReleaseParser( 'Scootering.September.2021.HYBRiD.MAGAZiNE.eBook-PAPERCLiPS', 'ebook' ),
-			'Title: Scootering / Group: PAPERCLiPS / Year: 2021 / Date: 01.09.2021 / Flags: eBook, Magazine / Format: Hybrid / Type: eBook'
+			'Title: Scootering / Group: PAPERCLiPS / Year: 2021 / Date: 01.09.2021 / Flags: Magazine / Format: Hybrid / Type: eBook'
 		],
 		// eBook #4 - Comic with title, title_extra and issue number (No.04)
 		[
 			new ReleaseParser( 'Viper.Comics.-.Ichabod.Jones.Monster.Hunter.No.04.2012.Hybrid.Comic.eBook-BitBook', 'ebook' ),
-			'Author: Viper Comics / Title: Ichabod Jones Monster Hunter / Group: BitBook / Year: 2012 / Issue: 4 / Flags: Comic, eBook / Format: Hybrid / Type: eBook'
+			'Author: Viper Comics / Title: Ichabod Jones Monster Hunter / Group: BitBook / Year: 2012 / Issue: 4 / Flags: Comic / Format: Hybrid / Type: eBook'
 		],
 		// eBook #5 - Basic magazine with issue number (No.314)
 		[
 			new ReleaseParser( 'EDGE.No.314.2018.HYBRiD.MAGAZiNE.eBook-PAPERCLiPS', 'ebook' ),
-			'Title: EDGE / Group: PAPERCLiPS / Year: 2018 / Issue: 314 / Flags: eBook, Magazine / Format: Hybrid / Type: eBook'
+			'Title: EDGE / Group: PAPERCLiPS / Year: 2018 / Issue: 314 / Flags: Magazine / Format: Hybrid / Type: eBook'
 		],
 		// eBook #6 - Other version of issue number (N119)
 		[
 			new ReleaseParser( 'Prog.N119.2021.RETAiL.MAGAZiNE.eBook-PRiNTER', 'ebook' ),
-			'Title: Prog / Group: PRiNTER / Year: 2021 / Issue: 119 / Flags: eBook, Magazine, Retail / Type: eBook'
+			'Title: Prog / Group: PRiNTER / Year: 2021 / Issue: 119 / Flags: Magazine, Retail / Type: eBook'
 		],
 		// eBook #7 - Other version of issue number (Band)
 		[
 			new ReleaseParser( 'Die.Enwor.Saga.Band.05.-.Das.Schwarze.Schiff.German.Ebook-Elements', 'ebook' ),
-			'Author: Die Enwor Saga / Title: Das Schwarze Schiff / Group: Elements / Issue: 5 / Flags: eBook / Language: German / Type: eBook'
+			'Author: Die Enwor Saga / Title: Das Schwarze Schiff / Group: Elements / Issue: 5 / Language: German / Type: eBook'
 		],
 		// eBook #8 - Other version of issue number (Issue)
 		[
 			new ReleaseParser( 'The.Amazing.Spiderman.Issue.501.January.2004.Comic.eBook-Dementia', 'ebook' ),
-			'Title: The Amazing Spiderman / Group: Dementia / Year: 2004 / Date: 01.01.2004 / Issue: 501 / Flags: Comic, eBook / Type: eBook'
+			'Title: The Amazing Spiderman / Group: Dementia / Year: 2004 / Date: 01.01.2004 / Issue: 501 / Flags: Comic / Type: eBook'
 		],
 		// eBook #9 - Other version of issue number
 		[
 			new ReleaseParser( 'Simpsons.Comics.Ausgabe.15.Januar.1998.German.Comic.eBook-HS', 'ebook' ),
-			'Title: Simpsons Comics / Group: HS / Year: 1998 / Date: 01.01.1998 / Issue: 15 / Flags: Comic, eBook / Language: German / Type: eBook'
+			'Title: Simpsons Comics / Group: HS / Year: 1998 / Date: 01.01.1998 / Issue: 15 / Flags: Comic / Language: German / Type: eBook'
 		],
 		// eBook #10 - title + title_extra + special date formatting (15 Januar 2004)
 		[
 			new ReleaseParser( 'Concorde.-.Die.Traumer.15.Januar.2004.Presseheft.German.Ebook-Elements', 'ebook' ),
-			'Author: Concorde / Title: Die Traumer / Group: Elements / Year: 2004 / Date: 15.01.2004 / Flags: eBook / Language: German / Type: eBook'
+			'Author: Concorde / Title: Die Traumer / Group: Elements / Year: 2004 / Date: 15.01.2004 / Language: German / Type: eBook'
 		],
 		// eBook #11 - Basic book with author and book title
 		[
 			new ReleaseParser( 'Gerd.Postel.-.Gestaendnisse.Eines.Falschen.Doktors.German.Ebook-Elements', 'ebook' ),
-			'Author: Gerd Postel / Title: Gestaendnisse Eines Falschen Doktors / Group: Elements / Flags: eBook / Language: German / Type: eBook'
+			'Author: Gerd Postel / Title: Gestaendnisse Eines Falschen Doktors / Group: Elements / Language: German / Type: eBook'
 		],
 		// eBook #12 - Issue is 0
 		[
 			new ReleaseParser( 'IDW.-.Machete.No.0.2010.Hybrid.Comic.eBook-BitBook', 'ebook' ),
-			'Author: IDW / Title: Machete / Group: BitBook / Year: 2010 / Issue: 0 / Flags: Comic, eBook / Format: Hybrid / Type: eBook'
+			'Author: IDW / Title: Machete / Group: BitBook / Year: 2010 / Issue: 0 / Flags: Comic / Format: Hybrid / Type: eBook'
 		],
 
 		// Abook
 		// Abook #1 - Title + title_extra + episode number (F04)
 		[
 			new ReleaseParser( 'Otfried_Preussler_-_Der_Hotzenplotz_Geht_Um-F04-(Audiobook)-DE-2001-S8', 'Abook' ),
-			'Author: Otfried Preussler / Title: Der Hotzenplotz Geht Um / Group: S8 / Year: 2001 / Episode: 4 / Flags: ABook / Language: German / Type: ABook'
+			'Author: Otfried Preussler / Title: Der Hotzenplotz Geht Um / Group: S8 / Year: 2001 / Episode: 4 / Language: German / Type: ABook'
 		],
 		// Abook #2 - Simple named abook
 		[
 			new ReleaseParser( 'York-2CD-ABOOK-DE-2001-sUppLeX', 'abook' ),
-			'Title: York / Group: sUppLeX / Year: 2001 / Flags: ABook / Source: CD / Language: German / Type: ABook'
+			'Title: York / Group: sUppLeX / Year: 2001 / Source: CD / Language: German / Type: ABook'
 		],
 		// Abook #3 - Other version of episode number (Folge 212)
 		[
 			new ReleaseParser( 'Die_Drei_Fragezeichen--Folge_212_und_der_weisse_Leopard-AUDIOBOOK-WEB-DE-2021-OMA', 'abook' ),
-			'Author: Die Drei Fragezeichen / Title: und der weisse Leopard / Group: OMA / Year: 2021 / Episode: 212 / Flags: ABook / Source: WEB / Language: German / Type: ABook'
+			'Author: Die Drei Fragezeichen / Title: und der weisse Leopard / Group: OMA / Year: 2021 / Episode: 212 / Source: WEB / Language: German / Type: ABook'
 		],
 		// Abook #4
 		[
 			new ReleaseParser( 'Perry_Rhodan-SE_117_Duell_Der_Erbfeinde-ABOOK-DE-MP3CD-2021-FLUiD', 'abook' ),
-			'Author: Perry Rhodan / Title: Duell Der Erbfeinde / Group: FLUiD / Year: 2021 / Episode: 117 / Flags: ABook / Source: MP3 CD / Language: German / Type: ABook'
+			'Author: Perry Rhodan / Title: Duell Der Erbfeinde / Group: FLUiD / Year: 2021 / Episode: 117 / Source: MP3 CD / Language: German / Type: ABook'
 		],
 		// Abook #5
 		[
 			new ReleaseParser( 'Jan_Tenner_Der_Neue_Superheld-F20_Rueckkehr_Ins_Reich_Der_Azzarus-Audiobook-DE-2021-VOiCE', 'abook' ),
-			'Author: Jan Tenner Der Neue Superheld / Title: Rueckkehr Ins Reich Der Azzarus / Group: VOiCE / Year: 2021 / Episode: 20 / Flags: ABook / Language: German / Type: ABook'
+			'Author: Jan Tenner Der Neue Superheld / Title: Rueckkehr Ins Reich Der Azzarus / Group: VOiCE / Year: 2021 / Episode: 20 / Language: German / Type: ABook'
 		],
 
 		// XXX
@@ -513,6 +518,8 @@ function release_parser_test()
 	];
 
 	$i = 1;
+	$passed = 0;
+	$failed = 0;
 
 	// Loop all test scenarios
 	foreach( $tests as $test )
@@ -521,10 +528,12 @@ function release_parser_test()
 		{
 			$output = !empty( $test[0]->get( 'title_extra' ) ) ? $test[0]->get( 'title' ) . " $white/$reset " . $test[0]->get( 'title_extra' ) : $test[0]->get( 'title' );
 			echo "$green($i)$bold$greenlight ✓ Passed:$reset $output" . \PHP_EOL;
+			$passed++;
 		}
 		else
 		{
 			echo "$redlight($i)$bold$red ✘ Failed:$reset " . $test[0]->get( 'release' ) . "\n$greenlightbg$black Right > $reset $test[1]\n$redbg$black Wrong > $reset $test[0]\n";
+			$failed++;
 		}
 
 		$i++;
@@ -533,7 +542,10 @@ function release_parser_test()
 		\usleep(15000);
 	}
 
-	echo \PHP_EOL . 'All tests finished in ' . \round( \microtime( \true ) - $start_time, 4 ) . 's' . \PHP_EOL;
+	echo \PHP_EOL . 'All tests finished in ' . \round( \microtime( \true ) - $start_time, 4 ) . 's' . \PHP_EOL . \PHP_EOL;
+
+	echo "$bold$greenlight ✓ Passed:$reset $passed" . \PHP_EOL;
+	echo "$bold$red ✘ Failed:$reset $failed" . \PHP_EOL;
 }
 
 
@@ -546,8 +558,8 @@ function release_parser_test()
 function release_parser_test_single()
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
-	$release_name = 'A.Todo.Gas.4.TS.XviD.LINE.PROPER.SCREENER.2009.ES-iND';
-	$release_section = 'screener';
+	$release_name = 'El.Exorcista.1973.DC.LATiN.SPANiSH.MULTi.2160p.UHD.BluRay.x265-CEBRAY';
+	$release_section = 'DC';
 	$release = new ReleaseParser( $release_name, $release_section );
 
 	// Check if expectation matches parsed.
