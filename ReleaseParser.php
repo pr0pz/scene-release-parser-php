@@ -9,7 +9,7 @@ require_once __DIR__ . '/ReleasePatterns.php';
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.4.1
+ * @version 1.4.2
  */
 
 class ReleaseParser extends ReleasePatterns
@@ -1628,7 +1628,7 @@ class ReleaseParser extends ReleasePatterns
 				if ( \str_contains( $pattern, '$' ) )
 				{
 					$pattern = \str_replace( '$', '', $pattern );
-					$regex_pattern = '/' . $separators . $pattern . '-(?:[\w.-]+){1,2}$/' . $flags;
+					$regex_pattern = '/' . $separators . $pattern . '(?:-[\w.]+){1,2}$/' . $flags;
 
 					// Check if pattern is inside release name
 					\preg_match( $regex_pattern, $release_name_cleaned, $matches );
@@ -1643,7 +1643,7 @@ class ReleaseParser extends ReleasePatterns
 					// Check if is last keyword before group
 					if ( empty( $matches ) )
 					{
-						$regex_pattern = '/' . $separators . $pattern . '-(?:[\w.-]+){1,2}$/' . $flags;
+						$regex_pattern = '/' . $separators . $pattern . '(?:-[\w.]+){1,2}$/' . $flags;
 						\preg_match( $regex_pattern, $release_name_cleaned, $matches );
 					}
 
