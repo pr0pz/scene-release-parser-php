@@ -9,7 +9,7 @@ require_once __DIR__ . '/ReleasePatterns.php';
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.4.2
+ * @version 1.4.3
  */
 
 class ReleaseParser extends ReleasePatterns
@@ -778,7 +778,7 @@ class ReleaseParser extends ReleasePatterns
 		}
 		else if ( $type === 'music' )
 		{
-			if ( \preg_match( '/^[\w()]+-[\w()]+-[\w()-]+$/i', $this->release ) )
+			if ( \preg_match( '/^[\w()]+-+[\w()]+-+[\w()-]+$/i', $this->release ) )
 				return \true;
 
 			if ( \preg_match( '/^VA-/i', $this->release ) )

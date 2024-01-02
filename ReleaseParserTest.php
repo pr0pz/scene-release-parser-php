@@ -10,7 +10,7 @@ require_once __DIR__ . '/ReleaseParser.php';
  * 
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.4.1
+ * @version 1.4.3
  */
 
 /**
@@ -558,8 +558,8 @@ function release_parser_test()
 function release_parser_test_single()
 {
 	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
-	$release_name = 'El.Exorcista.1973.DC.LATiN.SPANiSH.MULTi.2160p.UHD.BluRay.x265-CEBRAY';
-	$release_section = 'DC';
+	$release_name = 'Diephuis--Mirrors_EP-(DHR19)-WEB-2023-dh';
+	$release_section = '';
 	$release = new ReleaseParser( $release_name, $release_section );
 
 	// Check if expectation matches parsed.
