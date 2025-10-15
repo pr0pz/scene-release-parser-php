@@ -6,7 +6,7 @@ namespace ReleaseParser;
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.5.0
+ * @version 1.5.1
  */
 
 class ReleasePatterns {
@@ -32,7 +32,17 @@ class ReleasePatterns {
 	//const REGEX_OS = '';
 	// Episode pattern matches: S01E01 / 1x01 / E(PS)1 / OVA1 / F123 / Folge_123 / Episode 1 / Issue 1 etc.
 	// Good for tv and audiobook rls
-	const REGEX_EPISODE = '(?:(?:s\d+[._-]?)?(?:ep?|eps[._-]?|episode[._-]?|o[av]+[._-]?|f(?:olge[._-]?)?)([\d_-]+)|(?:\d+x)(\d+))';
+	const REGEX_EPISODE = <<<REGEX
+	(?:
+		(?:s\d+[._-]?)?(?:
+			ep?s?|
+			episode|
+			o[av]+|
+			f(?:olge)?
+		)[._-]?([\de_-]+)|
+		(?:\d+x)(\d+)
+	)
+	REGEX;
 	const REGEX_EPISODE_OTHER = '(?:ep?|eps[._-]?|se[._-]?|episode[._-]?|f(?:olge[._-]?)?|band[._-]?|issue[._-]?|ausgabe[._-]?|n[or]?[._-]?|(?:silber[._-])?edition[._-]?|sets?[._-]?)([\d_-]+)';
 	const REGEX_EPISODE_TV = '(?<!^)(?:(?:(?:[ST]|saison|staffel|temp)[._-]?\d+)?[._-]?(?:ep?|o[av]+[._-]?|eps[._-]?|episode[._-]?)[\d-]+|\d+x\d+|[ST]\d+)';
 	// For Disc numbers: Disc1 / DVD1 / CD1 / (S01)D01
@@ -222,7 +232,6 @@ class ReleasePatterns {
 		'h264' => 'h\.?264',
 		'h265' => 'h\.?265',
 		'HEVC' => '(?:HDR10)?HEVC',
-		'HEVC' => 'HEVC',
 		'VP8' => 'VP8',
 		'VP9' => 'VP9',
 		'MP4' => 'MP4',
@@ -373,7 +382,7 @@ class ReleasePatterns {
 		// Higher prio (last has higher prio) for Wii + NDS, because of virtual console and release titles containing older consoles
 		'Nintendo DS' => '3?DS(?:.dsi)?',
 		'Nintendo 3DS' => '(?:vc[._](?:\w+[._])?|new|n)?3DS(?!.max|max|.max\d|max\d)(?:ware)?',
-		'Nintendo WII' => '(?:vc[._](?:\w+[._])?)?Wiii?(.?dvd[r\d]?|clone|ware)?', 
+		'Nintendo WII' => '(?:vc[._](?:\w+[._])?)?Wiii?(.?dvd[r\d]?|clone|ware)?',
 		'Nintendo WII-U' => '(?:vc[._](?:\w+[._])?)?WII[._-]?U',
 	];
 
@@ -675,7 +684,7 @@ class ReleasePatterns {
 		'Superleague.Formula', 'Nascar.(?:cup|truck|xfinity|monster|raceday|camping|america|sprint|nextel|busch|\d{4})', '(?:ntt.)?Indycar\.(series|racing|\d{4})',
 		'DTM.(\d{2,4}|spa|lauszitzring|gp\d+|\d+.lauf)', // Deutsche Tourenwagen Masters
 		'DTC.\d{4}', // Danish Touringcar Championship
-		'[ew]rc[._-](?:\d{4})', 
+		'[ew]rc[._-](?:\d{4})',
 		'(?:[ew]rc|rx)[._-]fia[._-](?:world|european).rally(?:cross)?.championship.\d{4}', // Rallye
 		'Supercars.championship', 'V8.Supercars.\d{4}', 'Porsche.(Carrera|sprint|supercup)', 'Volkswagen.Racing.Cup', 'W.series.\d{4}',
 		'IMSA', 'Nitro[.]RX', 'Extreme[.]e',
@@ -776,36 +785,11 @@ class ReleasePatterns {
  * Polyfill functions.
  */
 
-// PHP < 7.3
-if ( !\function_exists( 'array_key_first' ) )
-{
-	function array_key_first( array $arr )
-	{
-		foreach( $arr as $key => $unused )
-		{
-			return $key;
-		}
-		return \null;
-	}
-}
-
-if ( !\function_exists( 'array_key_last' ) )
-{
-	function array_key_last( array $array )
-	{
-		if ( !\is_array( $array ) || empty( $array ) )
-		{
-			return \null;
-		}
-		return \array_keys( $array )[ \count( $array ) - 1 ];
-	}
-}
-
 // PHP < 8
-if ( !\function_exists( 'str_contains' ) )
+if ( !function_exists( 'str_contains' ) )
 {
-	function str_contains( string $haystack, string $needle )
+	function str_contains( string $haystack, string $needle ): bool
 	{
-		return empty( $needle ) || \strpos( $haystack, $needle ) !== false;
+		return empty( $needle ) || strpos( $haystack, $needle ) !== false;
 	}
 }

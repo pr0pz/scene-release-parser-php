@@ -1,21 +1,20 @@
 <?php
 namespace ReleaseParser;
 
-// Include ReleaseParser
 require_once __DIR__ . '/ReleaseParser.php';
 
 /**
  * This is the main test file.
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
- * 
+ *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.5.0
+ * @version 1.5.1
  */
 
 /**
  * Bulk tests. All have to pass.
- * 
+ *
  * @test
  */
 function release_parser_test()
@@ -23,7 +22,7 @@ function release_parser_test()
 	// Some Bash color codes (looks better)
 	$reset = "\33[0m";
 	$bold = "\33[1m";
-	$green = "\33[92m";
+	//$green = "\33[92m";
 	$green = "\33[32m";
 	$greenlight = "\33[92m";
 	$greenlightbg = "\33[102m";
@@ -32,12 +31,12 @@ function release_parser_test()
 	$redbg = "\33[41m";
 	$black = "\33[30m";
 	$white = "\33[97m";
-	$yellow = "\33[33m";
+	//$yellow = "\33[33m";
 
 	// Time passed calc
-	$start_time = \microtime( \true );
+	$start_time = microtime( true );
 
-	echo \PHP_EOL . 'Starting ReleaseParser tests ...' . \PHP_EOL . \PHP_EOL;
+	echo PHP_EOL . 'Starting ReleaseParser tests ...' . PHP_EOL . PHP_EOL;
 
 	// All releases that needed to be tested.
 	$tests = [
@@ -64,7 +63,7 @@ function release_parser_test()
 			'Title: Super Smash Bros Brawl / Group: WiiLeet / Disc: 5 / Format: DVDR / Resolution: PAL / Device: Nintendo WII / Type: Game'
 		],
 
-		
+
 
 		// Apps
 		[
@@ -129,7 +128,7 @@ function release_parser_test()
 			new ReleaseParser( 'PluralSight.Angular.Getting.Started.UPDATED.20220706.Bookware-KNiSO', 'PRE' ),
 			'Title: Angular Getting Started / Group: KNiSO / Source: PluralSight / Version: 20220706 / Type: Bookware'
 		],
-		
+
 
 		// Movies (usually a lot of flags for testing)
 		[
@@ -289,6 +288,11 @@ function release_parser_test()
 			new ReleaseParser( 'Friends.Saison5.Episode5-8.vo.subtitlefrench.DVDRIP.DivX-RoToTo', 'NDS' ),
 			'Title: Friends / Group: RoToTo / Season: 5 / Episode: 5-8 / Flags: Subbed / Source: DVDRip / Format: DiVX / Type: TV'
 		],
+		[
+			'TV #17 - Multiple episodes: 01-02',
+			new ReleaseParser( 'The.Last.Frontier.2025.S01E01-E02.1080p.WEB.H264-ETHEL', 'TV' ),
+			'Title: The Last Frontier / Group: ETHEL / Year: 2025 / Season: 1 / Episode: 01-02 / Source: WEB / Format: h264 / Resolution: 1080p / Type: TV'
+		],
 
 		// TV Sports
 		[
@@ -348,7 +352,7 @@ function release_parser_test()
 			new ReleaseParser( 'Spy.x.Family.E04.Elterngespraech.an.der.Eliteschule.German.2022.ANiME.DL.BDRiP.x264-STARS', 'ANiME' ),
 			'Show: Spy x Family / Title: Elterngespraech an der Eliteschule / Group: STARS / Year: 2022 / Episode: 4 / Flags: Anime / Source: BDRip / Format: x264 / Language: German, Multilingual / Type: Anime'
 		],
-	
+
 
 		// Music
 		[
@@ -518,7 +522,7 @@ function release_parser_test()
 			'Publisher: Lustery / Title: Leo And Madly A Happy Ending For Him / Group: WRB / Episode: 727 / Flags: HR, Vertical, XXX / Format: MP4 / Type: XXX'
 		],
 
-		
+
 
 		// MusicVideo
 		[
@@ -548,67 +552,67 @@ function release_parser_test()
 		if ( $test[1] == $test[2] )
 		{
 			$output = !empty( $test[1]->get( 'title_extra' ) ) ? $test[0] . " / " . $test[1]->get( 'title' ) . " $white-$reset " . $test[1]->get( 'title_extra' ) : $test[0] . " / " . $test[1]->get( 'title' );
-			echo "$green($i)$bold$greenlight ✓ Passed:$reset $output" . \PHP_EOL;
+			echo "$green($i)$bold$greenlight ✓ Passed:$reset $output" . PHP_EOL;
 			$passed++;
 		}
 		else
 		{
-			echo "$redlight($i)$bold$red ✘ Failed:$reset " . $test[1]->get( 'release' ) . "\n$greenlightbg$black Right > $reset $test[2]\n$redbg$black Wrong > $reset $test[0]\n";
+			echo "$redlight($i)$bold$red ✘ Failed:$reset " . $test[1]->get( 'release' ) . "\n$greenlightbg$black Right > $reset $test[2]\n$redbg$black Wrong > $reset $test[1]\n";
 			$failed++;
 		}
 
 		$i++;
 		// Let tests run slower, so we can actually see if one test fails.
 		// Normal test speed without usleep is about 100ms
-		\usleep(15000);
+		usleep(15000);
 	}
 
-	echo \PHP_EOL . 'All tests finished in ' . \round( \microtime( \true ) - $start_time, 4 ) . 's' . \PHP_EOL . \PHP_EOL;
+	echo PHP_EOL . 'All tests finished in ' . round( microtime( true ) - $start_time, 4 ) . 's' . PHP_EOL . PHP_EOL;
 
-	echo "$bold$greenlight ✓ Passed:$reset $passed" . \PHP_EOL;
-	echo "$bold$red ✘ Failed:$reset $failed" . \PHP_EOL;
+	echo "$bold$greenlight ✓ Passed:$reset $passed" . PHP_EOL;
+	echo "$bold$red ✘ Failed:$reset $failed" . PHP_EOL;
 }
 
 
 /**
  * Single test for debugging.
- * 
+ *
  * @test
  */
 
 function release_parser_test_single()
 {
-	echo \PHP_EOL . 'Starting ReleaseParser Single test ...' . \PHP_EOL . \PHP_EOL;
-	$release_name = 'Pay.the.Ghost.2015.1080p.HULU.WEB-DL.DDP.5.1.H.264-PiRaTeS[TGx]';
-	$release_section = '';
+	echo PHP_EOL . 'Starting ReleaseParser Single test ...' . PHP_EOL . PHP_EOL;
+	$release_name = 'The.Last.Frontier.2025.S01E01-E02.1080p.WEB.H264-ETHEL';
+	$release_section = 'TV';
 	$release = new ReleaseParser( $release_name, $release_section );
 
 	// Check if expectation matches parsed.
-	echo '[Original] ' . $release_name . \PHP_EOL;
-	echo '  [Parsed] ' . $release . \PHP_EOL;
+	echo '[Original] ' . $release_name . PHP_EOL;
+	echo '  [Parsed] ' . $release . PHP_EOL;
 
-	\print_r( $release );
+	print_r( $release );
 }
 
 
 /**
  * Read release names fomr file for faster checking.
  * Filename: releases.txt
- * 
+ *
  * @test
  */
 
 function release_parser_test_file()
 {
-	$handle = \fopen( __DIR__ . '/releases.txt', 'r');
+	$handle = fopen( __DIR__ . '/releases.txt', 'r');
 
 	if ( $handle )
 	{
 		$counter = 1;
-		while ( ($line = \fgets( $handle ) ) !== \false)
+		while ( ($line = fgets( $handle ) ) !== false)
 		{
 			echo $counter . ' > ' . $line;
-			echo $counter . ' > ' . new ReleaseParser( $line ) . \PHP_EOL . \PHP_EOL;
+			echo $counter . ' > ' . new ReleaseParser( $line ) . PHP_EOL . PHP_EOL;
 			$counter++;
 		}
 

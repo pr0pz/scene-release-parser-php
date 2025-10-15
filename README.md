@@ -2,7 +2,7 @@
 
 ![Made with PHP](https://img.shields.io/static/v1?label&message=PHP&color=777BB3&logo=php&logoColor=fff)
 ![Packagist package version](https://img.shields.io/packagist/v/propz/release-parser?color=777BB3&label=Packagist)
-![Minimum PHP version: 7.0.0](https://img.shields.io/packagist/dependency-v/propz/release-parser/php?color=777BB3&label=PHP)
+![Minimum PHP version: 7.4.0](https://img.shields.io/packagist/dependency-v/propz/release-parser/php?color=777BB3&label=PHP)
 
 ## __A library for parsing scene release names into simpler, reusable data.__
 

@@ -1,3 +1,13 @@
+version 1.5.1 ( updated 15.10.2025 )
+- Improved:
+	- Updated supported PHP version to 7.4
+	- PCRE-Modificator to all regex calls
+	- Small code improvements
+- Fixed:
+	- Parsing multiple episodes
+
+***
+
 version 1.5.0 ( updated 02.06.2024 )
 + Added
 	- Game groups: HHT, PLAYMAGiC

@@ -1,3 +1,15 @@
 # misc
-.DS_Store
 releases.txt
+.idea/
+.vscode/
+.claude/
+Thumbs.db
+*.log
+.DS_Store
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.directory
+.Trash-*
+*~
