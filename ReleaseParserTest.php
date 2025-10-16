@@ -9,7 +9,7 @@ require_once __DIR__ . '/ReleaseParser.php';
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.5.1
+ * @version 1.5.2
  */
 
 /**
@@ -62,8 +62,6 @@ function release_parser_test()
 			new ReleaseParser( 'Super_Smash_Bros_Brawl_DVD5_PAL_VC_SMD_Wii-WiiLeet', 'Wii' ),
 			'Title: Super Smash Bros Brawl / Group: WiiLeet / Disc: 5 / Format: DVDR / Resolution: PAL / Device: Nintendo WII / Type: Game'
 		],
-
-
 
 		// Apps
 		[
@@ -128,7 +126,6 @@ function release_parser_test()
 			new ReleaseParser( 'PluralSight.Angular.Getting.Started.UPDATED.20220706.Bookware-KNiSO', 'PRE' ),
 			'Title: Angular Getting Started / Group: KNiSO / Source: PluralSight / Version: 20220706 / Type: Bookware'
 		],
-
 
 		// Movies (usually a lot of flags for testing)
 		[
@@ -420,6 +417,11 @@ function release_parser_test()
 			new ReleaseParser( 'VA-The_Collapse_Of_Future_Vol_10_Part_1-TCOF10P1-WEB-2023-WAV', 'mp3' ),
 			'Artist: Various / Title: The Collapse Of Future Vol. 10 Part 1 / Group: WAV / Year: 2023 / Source: WEB / Type: Music'
 		],
+		[
+			'Music #14 - Falsely parsing Pal as resolution',
+			new ReleaseParser( 'Your_Pal_Bill-Plight_Of_The_Living_Dead-WEB-2017-SDRL', 'mp3' ),
+			'Artist: Your Pal Bill / Title: Plight Of The Living Dead / Group: SDRL / Year: 2017 / Source: WEB / Type: Music'
+		],
 
 		// EBook
 		[
@@ -521,8 +523,11 @@ function release_parser_test()
 			new ReleaseParser( 'Lustery.E727.Leo.And.Madly.A.Happy.Ending.For.Him.XXX.VERTICAL.HRp.MP4-WRB', 'XXX' ),
 			'Publisher: Lustery / Title: Leo And Madly A Happy Ending For Him / Group: WRB / Episode: 727 / Flags: HR, Vertical, XXX / Format: MP4 / Type: XXX'
 		],
-
-
+		[
+			'XXX #3 - Falsely parsing Ost as musicvideo',
+			new ReleaseParser( 'ClubSweethearts.24.12.25.Amelia.Ost.Sunny.May.And.Kitty.Doll88.Hardcore.XXX.2160p.MP4-VSEX', 'XXX-HD'),
+			'Publisher: ClubSweethearts / Title: Amelia Ost Sunny May And Kitty Doll88 Hardcore / Group: VSEX / Year: 2024 / Date: 25.12.2024 / Flags: XXX / Format: MP4 / Resolution: 2160p / Type: XXX'
+		],
 
 		// MusicVideo
 		[
@@ -583,8 +588,8 @@ function release_parser_test()
 function release_parser_test_single()
 {
 	echo PHP_EOL . 'Starting ReleaseParser Single test ...' . PHP_EOL . PHP_EOL;
-	$release_name = 'The.Last.Frontier.2025.S01E01-E02.1080p.WEB.H264-ETHEL';
-	$release_section = 'TV';
+	$release_name = 'Lenette.Van.Dongen.Dat.Doet.Ze.Anders.Nooit.2024.DUTCH.1080p.HDTV.x264-DTOD';
+	$release_section = 'mp3';
 	$release = new ReleaseParser( $release_name, $release_section );
 
 	// Check if expectation matches parsed.

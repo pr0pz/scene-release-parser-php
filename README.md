@@ -8,8 +8,8 @@
 
 _Like it? I'd appreciate the support :)_
 
-[![Follow on Twitter](https://img.shields.io/static/v1?label=Follow%20on&message=Twitter&color=1DA1F2&logo=twitter&logoColor=fff)](https://propz.de/twitter/)
 [![Watch on Twitch](https://img.shields.io/static/v1?label=Watch%20on&message=Twitch&color=bf94ff&logo=twitch&logoColor=fff)](https://propz.de/twitch/)
+[![Sub on YouTube](https://img.shields.io/static/v1?label=Sub%20on&message=YouTube&color=ff0000&logo=youtube&logoColor=fff)](https://propz.de/youtube/)
 [![Join on Discord](https://img.shields.io/static/v1?label=Join%20on&message=Discord&color=7289da&logo=discord&logoColor=fff)](https://propz.de/discord/)
 [![Donate on Ko-Fi](https://img.shields.io/static/v1?label=Donate%20on&message=Ko-Fi&color=ff5f5f&logo=kofi&logoColor=fff)](https://propz.de/kofi/)
 
