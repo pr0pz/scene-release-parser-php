@@ -11,7 +11,7 @@ require_once __DIR__ . '/ReleasePatterns.php';
  *
  * @package ReleaseParser
  * @author Wellington Estevo
- * @version 1.5.2
+ * @version 1.5.3
  */
 
 class ReleaseParser extends ReleasePatterns
@@ -1938,7 +1938,8 @@ class ReleaseParser extends ReleasePatterns
 			// Only do something if it's not empty
 			if (
 				!isset( $informationValue ) ||
-				$informationValue === ''
+				$informationValue === '' ||
+				$informationValue === false
 			) continue;
 
 			$attributes = [];
